@@ -45,6 +45,8 @@ def LineDetectionWithContoursAndShowImage(image, ori_img):
     contours, hierarchy = cv.findContours(image, cv.RETR_CCOMP, cv.CHAIN_APPROX_SIMPLE)
     # print(str(len(contours)))
     largest_contour = None
+    dir = None
+    angle = None
     if (len(contours) > 0):
         largest_contour = max(contours, key=cv.contourArea)
         if (validateContour(largest_contour)):
@@ -54,7 +56,7 @@ def LineDetectionWithContoursAndShowImage(image, ori_img):
             # draw contours
             cv.drawContours(ori_img, [largest_contour], -1, (0, 255), 3)
 
-    return ori_img, largest_contour
+    return ori_img, dir, angle
 
 
 def validateContour(contour):
@@ -72,8 +74,8 @@ def preprocessImage(img):
     img = cv.cvtColor(img, cv.COLOR_RGB2GRAY)
     # print("Image type:", img.dtype)
     edges = ApplyCannyEdge(img)
-    img = LineDetectionWithContoursAndShowImage(edges, ori_img)
-    return img
+    img, dir, angle = LineDetectionWithContoursAndShowImage(edges, ori_img)
+    return img, dir, angle
 
 
 
