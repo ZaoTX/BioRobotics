@@ -80,11 +80,18 @@ def FromAngleToSpeed(dir,angle):
 camera = picamera.PiCamera()
 camera.resolution = (640,480)
 rawCapture = picamera.array.PiRGBArray(camera,size=(640,480))
-
+last_dir = None
+last_angle = None
 for frame in camera.capture_continuous(rawCapture,format="rgb",use_video_port=True):
     image = frame.array
     img_bottom = image[-300:,:]
     img, dir, angle = LineDetection.preprocessImage(img_bottom)
+    if dir != None:
+        last_dir = dir
+        last_angle = angle
+    else:
+        dir = last_dir
+        angle = last_angle
     #LineDetection.LineInterpretation(contour)
     speedLeft,speedRight= FromAngleToSpeed(dir,angle)
     set_speed(speedLeft,speedRight)
