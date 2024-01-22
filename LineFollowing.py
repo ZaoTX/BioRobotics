@@ -63,19 +63,19 @@ def FromAngleToSpeed(dir,angle):
     speedLeft =10
     speedRight = 10
     if dir == "left":
-        if angle>45:
-            speedLeft = 4095
-            speedRight = 2000
-        else:
-            speedLeft = 4095
-            speedRight = 3000
-    elif dir == "right":
         if angle > 45:
             speedLeft = 2000
             speedRight = 4095
         else:
             speedLeft =3000
             speedRight = 4095
+    elif dir == "right":
+        if angle > 45:
+            speedLeft = 4095
+            speedRight = 2000
+        else:
+            speedLeft = 4095
+            speedRight = 3000
     return speedLeft,speedRight
 camera = picamera.PiCamera()
 camera.resolution = (640,480)
