@@ -60,8 +60,8 @@ def set_speed(speed_left, speed_right):
     pwm.set_pwm(ENB, 0, int(speed_right))
 
 def FromAngleToSpeed(dir,angle):
-    speedLeft =0
-    speedRight = 0
+    speedLeft =10
+    speedRight = 10
     if dir == "left":
         if angle>45:
             speedLeft = 4095
@@ -92,4 +92,5 @@ for frame in camera.capture_continuous(rawCapture,format="rgb",use_video_port=Tr
     rawCapture .truncate(0)
     key = cv2.waitKey(1) & 0xFF
     if key == ord("q"):
+        set_speed(0, 0)
         break
