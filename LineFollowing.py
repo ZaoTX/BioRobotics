@@ -1,12 +1,13 @@
-# Car control
-import Adafruit_PCA9685
-import RPi.GPIO as GPIO
+
 from picamera.array import PiRGBArray
 import numpy as np
 import cv2
 import picamera
 import LineDetection
 
+# Car control
+import Adafruit_PCA9685
+import RPi.GPIO as GPIO
 pwm = Adafruit_PCA9685.PCA9685()
 # Set frequency to 60hz, good for servos.
 pwm.set_pwm_freq(60)
@@ -85,7 +86,8 @@ for frame in camera.capture_continuous(rawCapture,format="rgb",use_video_port=Tr
     img_bottom = image[-300:,:]
     img, dir, angle = LineDetection.preprocessImage(img_bottom)
     #LineDetection.LineInterpretation(contour)
-    FromAngleToSpeed(dir,angle)
+    speedLeft,speedRight= FromAngleToSpeed(dir,angle)
+    set_speed(speedLeft,speedRight)
     cv2.imshow("Image with line detection",img)
     rawCapture .truncate(0)
     key = cv2.waitKey(1) & 0xFF
