@@ -67,7 +67,7 @@ for frame in camera.capture_continuous(rawCapture,format="rgb",use_video_port=Tr
     img, dir, angle = LineDetection.preprocessImage(img_bottom)
     #LineDetection.LineInterpretation(contour)
 
-    set_speed(1400,1900)
+    set_speed(1400,1400)
     cv2.imshow("Image with line detection",img)
     rawCapture .truncate(0)
     key = cv2.waitKey(1) & 0xFF
