@@ -57,12 +57,13 @@ def LineDetectionWithContoursAndShowImage(image, ori_img):
     largest_contour = None
     dir = None
     angle = None
+    centroid_x = None
     if (len(contours) > 0):
         largest_contour = max(contours, key=cv.contourArea)
         if (validateContour(largest_contour)):
             angle = getAngleFromContour(largest_contour, ori_img)
             dir, angle = getAngleWithDirection(angle)
-            M = cv2.moments(largest_contour)
+            M = cv.moments(largest_contour)
             centroid_x = int(M['m10'] / M['m00'])
             centroid_y = int(M['m01'] / M['m00'])
             #print(dir, angle)
