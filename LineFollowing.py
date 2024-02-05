@@ -63,7 +63,7 @@ def set_speed(speed_left, speed_right):
 
 def set_car_control(linear_v, angular_v):
     # map from speed to wheel motor input
-    a, b = 0.04296809, -0
+    a, b = 0.04296809, -6.13153081
     diff = (angular_v - b) / a
     j, k = 6.43083474e-02, 7.89978727e+01
     sum = (linear_v - k) / j
@@ -72,7 +72,7 @@ def set_car_control(linear_v, angular_v):
     left_in = sum - right_in
 
     # drive car with left and right control
-    print(left_in, right_in)
+    #print(left_in, right_in)
     set_speed(left_in, right_in)
 
     return
