@@ -5,12 +5,16 @@ from matplotlib import pyplot as plt
 
 def ApplyCannyEdge(image):
     # filter outliers
-    blurred = cv.GaussianBlur(image, (5, 5), 0)
-    # AdaptiveGuassian = cv.adaptiveThreshold(image,255, cv.ADAPTIVE_THRESH_GAUSSIAN_C,cv.THRESH_BINARY,199,80)
-    edges = cv.Canny(blurred, 150, 70)
+    blur = cv.GaussianBlur(image, (5, 5), 0)
+    AdaptiveGuassian = cv.adaptiveThreshold(blur,255, cv.ADAPTIVE_THRESH_GAUSSIAN_C,cv.THRESH_BINARY,11,2)
+    edges = cv.Canny(AdaptiveGuassian, 120, 50)
+    #ret, binary_img = cv.threshold(blur,180,255,cv.THRESH_BINARY)
     return edges
-
-
+def linePosition(image):
+    #the base line of the image
+    base_line = binary_img[-1]
+    #middle x coordinate of the image
+    middle = int(base_line.shape[0] / 2)
 
 def getAngleFromContour(contour, ori_img):
     rect = cv.minAreaRect(contour)
@@ -39,7 +43,13 @@ def getAngleWithDirection(angle):
         return "left", 90 + angle
     else:
         return "right", 90 - angle
-
+def getAngle(dir,angle):
+    if(dir == "left"):
+        print(-angle)
+        return -angle
+    else:
+        print(angle)
+        return angle
 
 def LineDetectionWithContoursAndShowImage(image, ori_img):
     contours, hierarchy = cv.findContours(image, cv.RETR_CCOMP, cv.CHAIN_APPROX_SIMPLE)
@@ -52,7 +62,7 @@ def LineDetectionWithContoursAndShowImage(image, ori_img):
         if (validateContour(largest_contour)):
             angle = getAngleFromContour(largest_contour, ori_img)
             dir, angle = getAngleWithDirection(angle)
-            print(dir, angle)
+            #print(dir, angle)
             # draw contours
             cv.drawContours(ori_img, [largest_contour], -1, (0, 255), 3)
 
@@ -74,7 +84,8 @@ def preprocessImage(img):
     img = cv.cvtColor(img, cv.COLOR_RGB2GRAY)
     # print("Image type:", img.dtype)
     edges = ApplyCannyEdge(img)
-    img, dir, angle = LineDetectionWithContoursAndShowImage(edges, ori_img)
+    img, dir, angle = LineDetectionWithContoursAndShowImage(edges, img)
+    angle = getAngle(dir,angle)
     return img, dir, angle
 
 
