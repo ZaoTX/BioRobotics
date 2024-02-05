@@ -97,7 +97,7 @@ last_angle = None
 controller = PID(1, 0.1, 0.05, setpoint=320, starting_output=3.14) # 320 is the mid point of the image in x direction
 for frame in camera.capture_continuous(rawCapture, format="rgb", use_video_port=True):
     image = frame.array
-    img_bottom = image[-200:, :]
+    img_bottom = image[-300:, :]
 
     img, dir, angle,centroid_x = LineDetection.preprocessImage(img_bottom)
     if (dir != None):
