@@ -72,7 +72,7 @@ def set_car_control(linear_v, angular_v):
     left_in = sum - right_in
 
     # drive car with left and right control
-    #print(left_in, right_in)
+    print(left_in, right_in)
     set_speed(left_in, right_in)
 
     return
