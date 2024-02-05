@@ -7,9 +7,9 @@ def ApplyCannyEdge(image):
     # filter outliers
     blur = cv.GaussianBlur(image, (5, 5), 0)
     AdaptiveGuassian = cv.adaptiveThreshold(blur,255, cv.ADAPTIVE_THRESH_GAUSSIAN_C,cv.THRESH_BINARY,11,2)
-    edges = cv.Canny(AdaptiveGuassian, 120, 50)
+    #edges = cv.Canny(AdaptiveGuassian, 120, 50)
     #ret, binary_img = cv.threshold(blur,180,255,cv.THRESH_BINARY)
-    return edges
+    return AdaptiveGuassian
 def linePosition(image):
     #the base line of the image
     base_line = binary_img[-1]
@@ -62,15 +62,18 @@ def LineDetectionWithContoursAndShowImage(image, ori_img):
         if (validateContour(largest_contour)):
             angle = getAngleFromContour(largest_contour, ori_img)
             dir, angle = getAngleWithDirection(angle)
+            M = cv2.moments(largest_contour)
+            centroid_x = int(M['m10'] / M['m00'])
+            centroid_y = int(M['m01'] / M['m00'])
             #print(dir, angle)
             # draw contours
             cv.drawContours(ori_img, [largest_contour], -1, (0, 255), 3)
 
-    return ori_img, dir, angle
+    return ori_img, dir, angle,centroid_x
 
 
 def validateContour(contour):
-    min_contour_points = 5  # Adjust the minimum number of points as needed
+    min_contour_points = 4  # Adjust the minimum number of points as needed
 
     if contour is not None and len(contour) > min_contour_points:
         # Valid contour
@@ -84,9 +87,9 @@ def preprocessImage(img):
     img = cv.cvtColor(img, cv.COLOR_RGB2GRAY)
     # print("Image type:", img.dtype)
     edges = ApplyCannyEdge(img)
-    img, dir, angle = LineDetectionWithContoursAndShowImage(edges, img)
+    img, dir, angle,centroid_x = LineDetectionWithContoursAndShowImage(edges, img)
     angle = getAngle(dir,angle)
-    return img, dir, angle
+    return img, dir, angle, centroid_x
 
 
 

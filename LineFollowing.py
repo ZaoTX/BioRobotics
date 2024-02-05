@@ -76,32 +76,16 @@ def set_car_control(linear_v, angular_v):
     set_speed(left_in, right_in)
 
     return
-
-
-def FromAngleToSpeed(dir, angle):
-    speedLeft = 1500
-    speedRight = 1500
-    if angle != None and angle < 15:
-        speedLeft = 1500
-        speedRight = 1500
-    else:
-        if dir == "right":
-            if angle > 30:
-                speedLeft = 3000
-                speedRight = 1500
-
-            else:
-                speedLeft = 2000
-                speedRight = 1500
-        elif dir == "left":
-            if angle > 30:
-                speedLeft = 1500
-                speedRight = 3000
-            else:
-                speedLeft = 1500
-                speedRight = 2000
-    return speedLeft, speedRight
-
+def findLine(baseline, middile_index):
+    linePos = 0
+    for i in range(middile_index):
+        if(baseline[middile_index+i]>0):
+            linePos = middile_index+i+1
+            break
+        if(baseline[middile_index-i]>0):
+            linePos = middile_index-i+1
+            break
+    return linePos
 
 camera = picamera.PiCamera()
 camera.resolution = (640, 480)
@@ -109,14 +93,15 @@ rawCapture = picamera.array.PiRGBArray(camera, size=(640, 480))
 last_dir = None
 last_angle = None
 # pid controller over the angle
-controller = PID(1, 0.1, 0.05, setpoint=0, output_limits=(-3.14, 3.14), starting_output=3.14, sample_time=1. / 30.)
-
+#controller = PID(1, 0.1, 0.05, setpoint=0, output_limits=(-3.14, 3.14), starting_output=3.14, sample_time=1. / 30.)
+controller = PID(1, 0.1, 0.05, setpoint=320) # 320 is the mid point of the image in x direction
 for frame in camera.capture_continuous(rawCapture, format="rgb", use_video_port=True):
     image = frame.array
-    img_bottom = image[-500:, :]
-    img, dir, angle = LineDetection.preprocessImage(img_bottom)
+    img_bottom = image[-100:, :]
+
+    img, dir, angle,centroid_x = LineDetection.preprocessImage(img_bottom)
     if (dir != None):
-        angular_v = controller(angle) - 3.14
+        angular_v = controller(angle)
         # linear_v = 400 - abs(angular_v * 100 / 3.14)
         linear_v = 300
         angular_v = angular_v * 30  # remap to (-100, 100), left positive, right negative
