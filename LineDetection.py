@@ -74,7 +74,7 @@ def LineDetectionWithContoursAndShowImage(image, ori_img):
 
 
 def validateContour(contour):
-    min_contour_points = 100  # Adjust the minimum number of points as needed
+    min_contour_points = 50  # Adjust the minimum number of points as needed
 
     if contour is not None and len(contour) > min_contour_points:
         # Valid contour
