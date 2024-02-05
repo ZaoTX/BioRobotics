@@ -7,9 +7,9 @@ def ApplyCannyEdge(image):
     # filter outliers
     blur = cv.GaussianBlur(image, (5, 5), 0)
     AdaptiveGuassian = cv.adaptiveThreshold(blur,255, cv.ADAPTIVE_THRESH_GAUSSIAN_C,cv.THRESH_BINARY,11,2)
-    #edges = cv.Canny(AdaptiveGuassian, 120, 50)
+    edges = cv.Canny(AdaptiveGuassian, 120, 50)
     #ret, binary_img = cv.threshold(blur,180,255,cv.THRESH_BINARY)
-    return AdaptiveGuassian
+    return edges
 def linePosition(image):
     #the base line of the image
     base_line = binary_img[-1]
