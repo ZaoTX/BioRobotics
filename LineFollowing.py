@@ -94,7 +94,7 @@ last_dir = None
 last_angle = None
 # pid controller over the angle
 #controller = PID(1, 0.1, 0.05, setpoint=0, output_limits=(-3.14, 3.14), starting_output=3.14, sample_time=1. / 30.)
-controller = PID(1, 0.1, 0.05, setpoint=320, starting_output=3.14) # 320 is the mid point of the image in x direction
+controller = PID(1, 0.1, 0.05, setpoint=320, starting_output=3.14,output_limits=(0, 6.28)) # 320 is the mid point of the image in x direction
 for frame in camera.capture_continuous(rawCapture, format="rgb", use_video_port=True):
     image = frame.array
     img_bottom = image[-300:, :]
