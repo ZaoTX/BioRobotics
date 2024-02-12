@@ -101,7 +101,7 @@ for frame in camera.capture_continuous(rawCapture, format="rgb", use_video_port=
 
     img, dir, angle,centroid_x = LineDetection.preprocessImage(img_bottom)
     if (dir != None):
-        angular_v = controller(centroid_x) - 3.14
+        angular_v = controller(centroid_x) - 3.140
         # linear_v = 400 - abs(angular_v * 100 / 3.14)
         linear_v = 300
         #angular_v = angular_v * 30  # remap to (-100, 100), left positive, right negative
