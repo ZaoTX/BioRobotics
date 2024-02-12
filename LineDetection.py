@@ -6,10 +6,10 @@ from matplotlib import pyplot as plt
 def ApplyCannyEdge(image):
     # filter outliers
     blur = cv.GaussianBlur(image, (5, 5), 0)
-    AdaptiveGuassian = cv.adaptiveThreshold(blur,255, cv.ADAPTIVE_THRESH_GAUSSIAN_C,cv.THRESH_BINARY,11,2)
-    edges = cv.Canny(AdaptiveGuassian, 120, 50)
-    #ret, binary_img = cv.threshold(blur,180,255,cv.THRESH_BINARY)
-    return edges
+    #AdaptiveGuassian = cv.adaptiveThreshold(blur,255, cv.ADAPTIVE_THRESH_GAUSSIAN_C,cv.THRESH_BINARY,11,2)
+    #edges = cv.Canny(blur, 120, 50)
+    ret, binary_img = cv.threshold(blur,80,255,cv.THRESH_BINARY_INV)
+    return binary_img
 def linePosition(image):
     #the base line of the image
     base_line = binary_img[-1]
@@ -74,7 +74,7 @@ def LineDetectionWithContoursAndShowImage(image, ori_img):
 
 
 def validateContour(contour):
-    min_contour_points = 50  # Adjust the minimum number of points as needed
+    min_contour_points = 20  # Adjust the minimum number of points as needed
 
     if contour is not None and len(contour) > min_contour_points:
         # Valid contour

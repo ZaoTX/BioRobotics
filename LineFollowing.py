@@ -63,13 +63,13 @@ def set_speed(speed_left, speed_right):
 
 def set_car_control(linear_v, angular_v):
     # map from speed to wheel motor input
-    a, b = 0.04296809, -6.13153081
+    a, b = 0.008603150562323695, -0.2914328262712497
     diff = (angular_v - b) / a
-    j, k = 6.43083474e-02, 7.89978727e+01
+    j, k = 0.06430834737443417, 78.99787271119764
     sum = (linear_v - k) / j
 
-    right_in = (diff + sum) / 2.
-    left_in = sum - right_in
+    left_in = (diff + sum) / 2.
+    right_in = sum - left_in
 
     # drive car with left and right control
     print(left_in, right_in)
@@ -97,19 +97,20 @@ last_angle = None
 controller = PID(1, 0.1, 0.05, setpoint=320, starting_output=3.14,output_limits=(0, 6.28)) # 320 is the mid point of the image in x direction
 for frame in camera.capture_continuous(rawCapture, format="rgb", use_video_port=True):
     image = frame.array
-    img_bottom = image[-300:, :]
+    img_bottom = image[-400:, :]
 
     img, dir, angle,centroid_x = LineDetection.preprocessImage(img_bottom)
     if (dir != None):
-        angular_v = controller(angle) -3.14
+        angular_v = controller(angle) - 3.14
         # linear_v = 400 - abs(angular_v * 100 / 3.14)
         linear_v = 300
         angular_v = angular_v * 30  # remap to (-100, 100), left positive, right negative
-        if (angle > 60 or angle < -60):
+        if (angle > 40 or angle < -40):
+            print("angle more than 60")
             angular_v = angular_v * 3
         set_car_control(linear_v, angular_v)
     else:
-        set_car_control(0, 80)
+        set_car_control(0, 0)
     cv2.imshow("Image with line detection", img)
     rawCapture.truncate(0)
     key = cv2.waitKey(1) & 0xFF
