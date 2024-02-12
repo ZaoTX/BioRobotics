@@ -63,7 +63,7 @@ def set_speed(speed_left, speed_right):
 
 def set_car_control(linear_v, angular_v):
     # map from speed to wheel motor input
-    a, b = 0.012904725843485542, -0.2914328262712497
+    a, b = 0.027384678763152703, -0.2914328262712497
     diff = (angular_v - b) / a
     j, k = 0.06430834737443417, 78.99787271119764
     sum = (linear_v - k) / j
@@ -101,7 +101,7 @@ for frame in camera.capture_continuous(rawCapture, format="rgb", use_video_port=
 
     img, dir, angle,centroid_x = LineDetection.preprocessImage(img_bottom)
     if (dir != None):
-        angular_v = controller(angle) - 3.14
+        angular_v = controller(centroid_x) - 3.14
         # linear_v = 400 - abs(angular_v * 100 / 3.14)
         linear_v = 300
         #angular_v = angular_v * 30  # remap to (-100, 100), left positive, right negative
