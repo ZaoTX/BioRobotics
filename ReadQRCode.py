@@ -1,5 +1,6 @@
 import cv2
 import picamera
+from picamera.array import PiRGBArray
 import numpy as np
 
 camera = picamera.PiCamera()
