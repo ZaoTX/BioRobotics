@@ -30,10 +30,8 @@ for frame in camera.capture_continuous(rawCapture, format="rgb", use_video_port=
         print("QR Code not detected")
         cv2.imshow("Results", image)
 
-    cv2.imshow("Image with line detection", image)
     rawCapture.truncate(0)
 
     key = cv2.waitKey(1) & 0xFF
     if key == ord("q"):
-        set_speed(0, 0)
         break
