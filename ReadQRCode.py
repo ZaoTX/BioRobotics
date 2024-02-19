@@ -4,7 +4,7 @@ import numpy as np
 
 camera = picamera.PiCamera()
 camera.resolution = (640, 480)
-rawCapture = picamera.array.PiRGBArray(camera, size=(640, 480))
+rawCapture = PiRGBArray(camera, size=(640, 480))
 
 # Display barcode and QR code location
 def display(im, bbox):

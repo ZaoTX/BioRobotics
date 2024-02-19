@@ -89,7 +89,7 @@ def findLine(baseline, middile_index):
 
 camera = picamera.PiCamera()
 camera.resolution = (640, 480)
-rawCapture = picamera.array.PiRGBArray(camera, size=(640, 480))
+rawCapture = PiRGBArray(camera, size=(640, 480))
 last_dir = None
 last_angle = None
 # pid controller over the angle
