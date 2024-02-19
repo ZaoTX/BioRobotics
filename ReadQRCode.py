@@ -23,7 +23,7 @@ for frame in camera.capture_continuous(rawCapture, format="rgb", use_video_port=
     data, bbox, rectifiedImage = qrDecoder.detectAndDecode(image)
     if len(data) > 0:
         print("Decoded Data : {}".format(data))
-        display(image, bbox)
+        #display(image, bbox)
         rectifiedImage = np.uint8(rectifiedImage);
         cv2.imshow("Rectified QRCode", rectifiedImage);
     else:
