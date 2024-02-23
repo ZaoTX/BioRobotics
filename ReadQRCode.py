@@ -124,7 +124,7 @@ def analyse_image(image):
     barcodes = decode(RGB_image)
     if len(barcodes) > 0:
         print("Decoded Data : {}".format(barcodes))
-        if("car_rotate_720" in barcodes[0].data ):
+        if("car_rotate_720" in str(barcodes[0].data) ):
              Turn720Deg()
     else:
         print("QR Code not detected")
