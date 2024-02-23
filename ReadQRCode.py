@@ -121,6 +121,9 @@ def control_car(dry_run=False):
     killer = GracefulKiller()
     image = get_image(cap, killer)
     analyse_image(image)
+    while not killer.kill_now:
+        analyse_image(image)
+
 
 def close_cam(cap):
     cap.release()
