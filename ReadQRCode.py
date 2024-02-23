@@ -7,7 +7,7 @@ import signal
 
 import Adafruit_PCA9685
 import RPi.GPIO as GPIO
-
+from qreader import QReader
 pwm = Adafruit_PCA9685.PCA9685()
 # Set frequency to 60hz, good for servos.
 pwm.set_pwm_freq(60)
@@ -111,10 +111,12 @@ def analyse_image(image):
     blur = cv2.GaussianBlur(image, (5, 5), 0)
     ret, binary_img = cv2.threshold(blur, 0, 255, cv2.THRESH_BINARY_INV + cv2.THRESH_OTSU)
     qrDecoder = cv2.QRCodeDetector()
+    qrReader = QReader()
+    qreader_out = qrReader.detect_and_decode(image=image)
     # Detect and decode the qrcode
-    data, bbox, rectifiedImage = qrDecoder.detectAndDecode(image)
-    if len(data) > 0:
-        print("Decoded Data : {}".format(data))
+    #data, bbox, rectifiedImage = qrDecoder.detectAndDecode(image)
+    if len(qreader_out) > 0:
+        print("Decoded Data : {}".format(qreader_out))
     else:
         print("QR Code not detected")
 def control_car(dry_run=False):
