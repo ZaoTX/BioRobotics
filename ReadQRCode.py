@@ -3,8 +3,7 @@ import math
 import cv2
 from simple_pid.pid import PID
 import numpy as np
-from time import sleep
-from time import time
+import time
 import signal
 
 import Adafruit_PCA9685
