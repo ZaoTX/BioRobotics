@@ -108,7 +108,7 @@ def init_cam():
     cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 480)
 
     return cap
-def Turn720Deg():
+def Turn720Deg(linv_ori,angv_ori):
     #Turn the car for 720
     ang_v = 5 # in radians
 
@@ -118,14 +118,33 @@ def Turn720Deg():
 
     set_car_control(linear_v=0, angular_v=ang_v)
     time.sleep(time_needed)
+    set_car_control(linear_v=linv_ori, angular_v=angv_ori)
+def TurnAround(linv_ori, angv_ori):
+    # Turn the car for 720
+    ang_v = 5  # in radians
+
+    # turning speed
+    speed_actual = ang_v * 180 / math.pi
+    time_needed = 180 / speed_actual
+
+    set_car_control(linear_v=0, angular_v=ang_v)
+    time.sleep(time_needed)
+    set_car_control(linear_v=linv_ori, angular_v=angv_ori)
+def Stop10s(linv_ori, angv_ori):
     set_car_control(linear_v=0, angular_v=0)
+    time.sleep(10)
+    set_car_control(linear_v=linv_ori, angular_v=angv_ori)
 def analyse_image(image):
     RGB_image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
     barcodes = decode(RGB_image)
     if len(barcodes) > 0:
         print("Decoded Data : {}".format(barcodes))
         if("car_rotate_720" in str(barcodes[0].data) ):
-             Turn720Deg()
+             Turn720Deg(0,0)
+        elif("car_turn_around" in str(barcodes[0].data)):
+            TurnAround(0,0)
+        elif ("car_stop_10s" in str(barcodes[0].data)):
+            Stop10s(0, 0)
     else:
         print("QR Code not detected")
 def control_car(dry_run=False):
