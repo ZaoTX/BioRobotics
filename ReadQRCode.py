@@ -1,14 +1,12 @@
-from picamera.array import PiRGBArray
-import numpy as np
 import cv2
-import picamera
-import LineDetection
 from simple_pid.pid import PID
-# Car control
-import Adafruit_PCA9685
-import RPi.GPIO as GPIO
+import numpy as np
+from time import sleep
 from time import time
 import signal
+
+import Adafruit_PCA9685
+import RPi.GPIO as GPIO
 
 pwm = Adafruit_PCA9685.PCA9685()
 # Set frequency to 60hz, good for servos.
