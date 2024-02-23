@@ -108,8 +108,6 @@ def init_cam():
 
     return cap
 def analyse_image(image):
-    blur = cv2.GaussianBlur(image, (5, 5), 0)
-    ret, binary_img = cv2.threshold(blur, 0, 255, cv2.THRESH_BINARY_INV + cv2.THRESH_OTSU)
     barcodes = pyzbar.decode(image)
 
     # Detect and decode the qrcode
