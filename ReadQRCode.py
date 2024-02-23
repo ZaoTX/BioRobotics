@@ -110,7 +110,7 @@ def init_cam():
     return cap
 def Turn720Deg():
     #Turn the car for 720
-    ang_v = 4 # in radians
+    ang_v = 5 # in radians
 
     #turning speed
     speed_actual = ang_v*180/math.pi
