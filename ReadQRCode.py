@@ -7,7 +7,7 @@ import signal
 
 import Adafruit_PCA9685
 import RPi.GPIO as GPIO
-from qreader.qreader import QReader
+from pyzbar import pyzbar
 pwm = Adafruit_PCA9685.PCA9685()
 # Set frequency to 60hz, good for servos.
 pwm.set_pwm_freq(60)
@@ -75,13 +75,13 @@ class GracefulKiller:
 
 def get_image(cap, killer):
     # read image from pi car camera
-    ret, frame = cap.read()
+    ret, frame_ori = cap.read()
     if killer.kill_now:
         return np.zeros((480, 640))
-    frame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+    frame = cv2.cvtColor(frame_ori, cv2.COLOR_BGR2GRAY)
     # save last frame
     cv2.imwrite("last_frame.png", frame)
-    return frame
+    return frame_ori,frame
 def set_car_control(linear_v, angular_v):
     # map from speed to wheel motor input
     a, b = 0.027384678763152703, -0.2914328262712497
@@ -110,23 +110,22 @@ def init_cam():
 def analyse_image(image):
     blur = cv2.GaussianBlur(image, (5, 5), 0)
     ret, binary_img = cv2.threshold(blur, 0, 255, cv2.THRESH_BINARY_INV + cv2.THRESH_OTSU)
-    qrDecoder = cv2.QRCodeDetector()
-    qrReader = QReader()
-    qreader_out = qrReader.detect_and_decode(image=image)
+    barcodes = pyzbar.decode(image)
+
     # Detect and decode the qrcode
     #data, bbox, rectifiedImage = qrDecoder.detectAndDecode(image)
-    if len(qreader_out) > 0:
-        print("Decoded Data : {}".format(qreader_out))
+    if len(barcodes) > 0:
+        print("Decoded Data : {}".format(barcodes))
     else:
         print("QR Code not detected")
 def control_car(dry_run=False):
     cap = init_cam()
     killer = GracefulKiller()
-    image = get_image(cap, killer)
-    analyse_image(image)
+    image_ori,image = get_image(cap, killer)
+    analyse_image(image_ori)
     while not killer.kill_now:
-        image = get_image(cap, killer)
-        analyse_image(image)
+        image_ori,image  = get_image(cap, killer)
+        analyse_image(image_ori)
 
 
 def close_cam(cap):
