@@ -122,6 +122,7 @@ def control_car(dry_run=False):
     image = get_image(cap, killer)
     analyse_image(image)
     while not killer.kill_now:
+        image = get_image(cap, killer)
         analyse_image(image)
 
 
