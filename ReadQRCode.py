@@ -1,4 +1,4 @@
- from picamera.array import PiRGBArray
+from picamera.array import PiRGBArray
 import numpy as np
 import cv2
 import picamera
