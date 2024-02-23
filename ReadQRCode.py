@@ -5,11 +5,10 @@ from simple_pid.pid import PID
 import numpy as np
 import time
 import signal
-
+from pyzbar.pyzbar import decode
 import Adafruit_PCA9685
 import RPi.GPIO as GPIO
-from qrdet.qrdet import QRDetector
-from qreader.qreader import QReader
+
 pwm = Adafruit_PCA9685.PCA9685()
 # Set frequency to 60hz, good for servos.
 pwm.set_pwm_freq(60)
@@ -122,11 +121,11 @@ def Turn720Deg():
     set_car_control(linear_v=0, angular_v=0)
 def analyse_image(image):
     RGB_image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
-    qreader = QReader()
-    decoded_text = qreader.detect_and_decode(image=RGB_image)
-    if len(decoded_text) > 0:
-        print("Decoded Data : {}".format(decoded_text))
-        Turn720Deg()
+    barcodes = decode(RGB_image)
+    if len(barcodes) > 0:
+        print("Decoded Data : {}".format(barcodes))
+        if("car_rotate_720" in barcodes ):
+             Turn720Deg()
     else:
         print("QR Code not detected")
 def control_car(dry_run=False):
