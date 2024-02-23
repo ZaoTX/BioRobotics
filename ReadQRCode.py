@@ -7,7 +7,7 @@ import signal
 
 import Adafruit_PCA9685
 import RPi.GPIO as GPIO
-from qreader import QReader
+from qreader.qreader import QReader
 pwm = Adafruit_PCA9685.PCA9685()
 # Set frequency to 60hz, good for servos.
 pwm.set_pwm_freq(60)
