@@ -1,3 +1,5 @@
+import math
+
 import cv2
 from simple_pid.pid import PID
 import numpy as np
@@ -84,7 +86,7 @@ def get_image(cap, killer):
     return frame_ori,frame
 def set_car_control(linear_v, angular_v):
     # map from speed to wheel motor input
-    a, b = 0.027384678763152703, -0.2914328262712497
+    a, b = 0.0008603150562323695, -0.2914328262712497
     diff = (angular_v - b) / a
     j, k = 0.06430834737443417, 78.99787271119764
     sum = (linear_v - k) / j
@@ -107,13 +109,23 @@ def init_cam():
     cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 480)
 
     return cap
+def Turn720Deg():
+    #Turn the car for 720
+    ang_v = 6 # in radians
+
+    #turning speed
+    speed_actual = ang_v*180/math.pi
+    time_needed = 720/speed_actual
+
+    set_car_control(linear_v=0, angular_v=ang_v)
+    time.sleep(time_needed)
+    set_car_control(linear_v=0, angular_v=0)
 def analyse_image(image):
     gray_image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
     qrcodes = pyzbar.decode(gray_image)
-    # Detect and decode the qrcode
-    #data, bbox, rectifiedImage = qrDecoder.detectAndDecode(image)
     if len(qrcodes) > 0:
         print("Decoded Data : {}".format(qrcodes[0].data))
+        Turn720Deg()
     else:
         print("QR Code not detected")
 def control_car(dry_run=False):
