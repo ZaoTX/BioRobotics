@@ -112,7 +112,7 @@ def analyse_image(image):
     ret, binary_img = cv2.threshold(blur, 0, 255, cv2.THRESH_BINARY_INV + cv2.THRESH_OTSU)
     qrDecoder = cv2.QRCodeDetector()
     # Detect and decode the qrcode
-    data, bbox, rectifiedImage = qrDecoder.detectAndDecode(binary_img)
+    data, bbox, rectifiedImage = qrDecoder.detectAndDecode(image)
     if len(data) > 0:
         print("Decoded Data : {}".format(data))
     else:
