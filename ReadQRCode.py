@@ -108,14 +108,14 @@ def init_cam():
 
     return cap
 def analyse_image(image):
-    qrcodes = pyzbar.decode(image)
-    print(qrcodes)
+    gray_image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+    qrcodes = pyzbar.decode(gray_image)
     # Detect and decode the qrcode
     #data, bbox, rectifiedImage = qrDecoder.detectAndDecode(image)
-    # if len(barcodes) > 0:
-    #     print("Decoded Data : {}".format(barcodes))
-    # else:
-    #     print("QR Code not detected")
+    if len(qrcodes) > 0:
+        print("Decoded Data : {}".format(qrcodes[0].data))
+    else:
+        print("QR Code not detected")
 def control_car(dry_run=False):
     cap = init_cam()
     killer = GracefulKiller()
