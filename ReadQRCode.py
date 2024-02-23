@@ -109,7 +109,7 @@ def init_cam():
     return cap
 def analyse_image(image):
     qrcodes = pyzbar.decode(image)
-    print(qrcodes[0].data)
+    print(qrcodes)
     # Detect and decode the qrcode
     #data, bbox, rectifiedImage = qrDecoder.detectAndDecode(image)
     # if len(barcodes) > 0:
