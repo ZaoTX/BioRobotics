@@ -108,10 +108,11 @@ def init_cam():
 
     return cap
 def analyse_image(image):
-
+    blur = cv2.GaussianBlur(image, (5, 5), 0)
+    ret, binary_img = cv2.threshold(blur, 0, 255, cv2.THRESH_BINARY_INV + cv2.THRESH_OTSU)
     qrDecoder = cv2.QRCodeDetector()
     # Detect and decode the qrcode
-    data, bbox, rectifiedImage = qrDecoder.detectAndDecode(image)
+    data, bbox, rectifiedImage = qrDecoder.detectAndDecode(binary_img)
     if len(data) > 0:
         print("Decoded Data : {}".format(data))
     else:
