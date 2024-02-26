@@ -164,8 +164,9 @@ def control_car(dry_run=False):
         if(not qrcode_detected):
             image_ori,image  = get_image(cap, killer)
             qrcode_detected,time_needed= analyse_image(image_ori)
-            time.sleep(time_needed)
+
             qrcode_detected = False
+            time.sleep(time_needed)
 
 
 def close_cam(cap):
