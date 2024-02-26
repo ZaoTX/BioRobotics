@@ -160,14 +160,20 @@ def control_car(dry_run=False):
     killer = GracefulKiller()
     image_ori,image = get_image(cap, killer)
     qrcode_detected,time_needed=  analyse_image(image_ori)
+
+    last_detection_time = 0
     while not killer.kill_now:
         if(not qrcode_detected):
             image_ori,image  = get_image(cap, killer)
             qrcode_detected,time_needed= analyse_image(image_ori)
+            if qrcode_detected:
+                last_detection_time = time.time()
 
-            qrcode_detected = False
-            time.sleep(time_needed)
-
+            if qrcode_detected and time.time() - last_detection_time >= time_needed:
+                cap.release()  # Release the camera capture
+                cap = init_cam()  # Reinitialize the camera capture
+                qrcode_detected = False  # Reset the flag
+                last_detection_time = 0  # Reset the last detection time
 
 def close_cam(cap):
     cap.release()
