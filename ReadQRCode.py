@@ -178,7 +178,7 @@ def control_car(dry_run=False):
                 qrcode_detected = False  # Reset the flag
                 last_detection_time = 0  # Reset the last detection time
             else:
-                break
+                return
 
 def close_cam(cap):
     cap.release()
