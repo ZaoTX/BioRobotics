@@ -154,7 +154,7 @@ def analyse_image(image):
             return True,time_needed
     else:
         print("QR Code not detected")
-        return False
+        return False, 0
 def control_car(dry_run=False):
     cap = init_cam()
     killer = GracefulKiller()
