@@ -170,6 +170,7 @@ def control_car(dry_run=False):
                 last_detection_time = time.time()
 
             if qrcode_detected and time.time() - last_detection_time >= time_needed:
+                print("cam refresh")
                 cap.release()  # Release the camera capture
                 cap = init_cam()  # Reinitialize the camera capture
                 qrcode_detected = False  # Reset the flag
