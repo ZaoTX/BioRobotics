@@ -169,6 +169,7 @@ def control_car(dry_run=False):
             qrcode_detected, time_needed = analyse_image(image_ori)
             if qrcode_detected:
                 # Pause the camera capture
+                last_detection_time = time.time()
                 paused = True
                 print("Camera paused")
         else:
