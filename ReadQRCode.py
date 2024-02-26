@@ -135,8 +135,8 @@ def Stop10s(linv_ori, angv_ori):
     time.sleep(10)
     set_car_control(linear_v=linv_ori, angular_v=angv_ori)
 def analyse_image(image):
-    RGB_image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
-    barcodes = decode(RGB_image)
+    GRAY_image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+    barcodes = decode(GRAY_image)
     if len(barcodes) > 0:
         print("Decoded Data : {}".format(barcodes))
         if("car_rotate_720" in str(barcodes[0].data) ):
