@@ -160,7 +160,7 @@ def control_car(dry_run=False):
     killer = GracefulKiller()
     image_ori,image = get_image(cap, killer)
     qrcode_detected,time_needed=  analyse_image(image_ori)
-
+    paused = False
     last_detection_time = 0
     while not killer.kill_now:
         if not qrcode_detected:
