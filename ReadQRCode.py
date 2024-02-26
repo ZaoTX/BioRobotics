@@ -174,7 +174,9 @@ def control_car(dry_run=False):
         else:
             # Resume the camera capture
             paused = False
+            qrcode_detected = False
             print("Camera resumed")
+
 
 
 def close_cam(cap):
