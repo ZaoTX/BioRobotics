@@ -172,12 +172,11 @@ def control_car(dry_run=False):
                 paused = True
                 print("Camera paused")
         else:
-            time.sleep(time_needed)
-
-            # Resume the camera capture
-            paused = False
-            qrcode_detected = False
-            print("Camera resumed")
+            # Check if it's time to resume
+            if time.time() - last_detection_time > time_needed:
+                paused = False
+                qrcode_detected = False
+                print("Camera resumed after time needed")
 
 
 
