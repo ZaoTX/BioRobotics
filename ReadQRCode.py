@@ -166,8 +166,10 @@ def control_car(dry_run=False):
         if(not qrcode_detected):
             image_ori,image  = get_image(cap, killer)
             qrcode_detected,time_needed= analyse_image(image_ori)
+            print("time_needed time =  " + str(time_needed))
             if qrcode_detected:
                 last_detection_time = time.time()
+                print("current time =  " + str(last_detection_time))
 
             if qrcode_detected and time.time() - last_detection_time >= time_needed:
                 print("cam refresh")
