@@ -119,7 +119,7 @@ def Turn720Deg(linv_ori,angv_ori):
     set_car_control(linear_v=0, angular_v=ang_v)
     time.sleep(time_needed)
     set_car_control(linear_v=linv_ori, angular_v=angv_ori)
-    return False
+    return time_needed
 def TurnAround(linv_ori, angv_ori):
     # Turn the car for 720
     ang_v = 5  # in radians
@@ -131,26 +131,27 @@ def TurnAround(linv_ori, angv_ori):
     set_car_control(linear_v=0, angular_v=ang_v)
     time.sleep(time_needed)
     set_car_control(linear_v=linv_ori, angular_v=angv_ori)
-    return False
+    return time_needed
 def Stop10s(linv_ori, angv_ori):
     set_car_control(linear_v=0, angular_v=0)
     time.sleep(10)
     set_car_control(linear_v=linv_ori, angular_v=angv_ori)
-    return False
+
+    return 10
 def analyse_image(image):
     GRAY_image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
     barcodes = decode(GRAY_image)
     if len(barcodes) > 0:
         print("Decoded Data : {}".format(barcodes))
         if("car_rotate_720" in str(barcodes[0].data) ):
-            Turn720Deg(0,0)
-            return True
+            time_needed = Turn720Deg(0,0)
+            return True,time_needed
         elif("car_turn_around" in str(barcodes[0].data)):
-            TurnAround(0,0)
-            return True
+            time_needed = TurnAround(0,0)
+            return True,time_needed
         elif ("car_stop_10s" in str(barcodes[0].data)):
-            Stop10s(0, 0)
-            return True
+            time_needed = Stop10s(0, 0)
+            return True,time_needed
     else:
         print("QR Code not detected")
         return False
@@ -158,12 +159,12 @@ def control_car(dry_run=False):
     cap = init_cam()
     killer = GracefulKiller()
     image_ori,image = get_image(cap, killer)
-    qrcode_detected=  analyse_image(image_ori)
+    qrcode_detected,time_needed=  analyse_image(image_ori)
     while not killer.kill_now:
         if(not qrcode_detected):
             image_ori,image  = get_image(cap, killer)
-            qrcode_detected= analyse_image(image_ori)
-        qrcode_detected= False
+            qrcode_detected,time_needed= analyse_image(image_ori)
+            time.sleep(time_needed)
 
 
 def close_cam(cap):
