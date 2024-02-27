@@ -30,8 +30,8 @@ def detect_ducks(image: np.ndarray) -> list[cv2.KeyPoint]:
     # Read the image, shrink, apply "distance to yellow" filter
     smol_img = cv2.resize(image, (128, 128), interpolation=cv2.INTER_LINEAR)
     yellows = np.apply_along_axis(distance_to_yellow, -1, smol_img)
-    #cv2.imshow("smol", smol_img)
-    #cv2.imshow("yellows", yellows)
+    cv2.imshow("smol", smol_img)
+    cv2.imshow("yellows", yellows)
 
     yellow_mask = (yellows > -1.3).astype(np.uint8) * 255  # Masks that is 0 in yellow regions
 
