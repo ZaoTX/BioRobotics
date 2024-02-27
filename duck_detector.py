@@ -34,7 +34,7 @@ def detect_ducks(image: np.ndarray) -> list[cv2.KeyPoint]:
     cv2.imshow("yellows", yellows)
 
     if (yellows <= 100).any():
-        print("there is a duck")
+        print("there is A duck")
     # yellow_mask = (yellows > 0).astype(np.uint8) * 255  # Masks that is 0 in yellow regions
     # cv2.imshow("yellow_mask",yellow_mask)
     # # Do a blob detection to detect regions of zeroes in the yellow mask
