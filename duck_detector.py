@@ -45,7 +45,7 @@ def detect_ducks(image: np.ndarray) -> list[cv2.KeyPoint]:
     # keypoints = detector.detect(yellow_mask)
     # img_with_keypoints = cv2.drawKeypoints(smol_img, keypoints, np.array([]), (0, 0, 255), cv2.DRAW_MATCHES_FLAGS_DRAW_RICH_KEYPOINTS)
     #cv2.imshow("kps", img_with_keypoints)
-    cv2.waitKey(0)
+    #cv2.waitKey(0)
     return ""
     #return list(keypoints)
 
