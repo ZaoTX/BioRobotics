@@ -108,9 +108,9 @@ def control_car(dry_run=False):
         image_ori, image = get_image(cap, killer)
         keypoints = duck_detector.detect_ducks(image_ori)
         if len(keypoints) > 0:
-            print(f'image {image_ori} has ducks')
+            print(f'has ducks')
         else:
-            print(f'image {image_ori} DOES NOT have ducks')
+            print(f'DOES NOT have ducks')
 
 def init_cam():
     cap = cv2.VideoCapture(0)
