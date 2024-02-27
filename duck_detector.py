@@ -36,7 +36,7 @@ def detect_ducks(image: np.ndarray) -> list[cv2.KeyPoint]:
     yellow_mask = (yellows > -1.3).astype(np.uint8) * 255  # Masks that is 0 in yellow regions
 
     # Do a blob detection to detect regions of zeroes in the yellow mask
-    params = cv2.SimpleBlobDetector.Params()
+    params = cv2.SimpleBlobDetector_Params()
     params.minArea = 4*5  # Not a single pixel I guess...
     params.filterByInertia = False
     params.filterByConvexity = False  # Duck is not very convex...
