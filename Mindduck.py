@@ -122,8 +122,8 @@ def init_cam():
     if not (cap.isOpened()):
         raise Exception("Camera is not available")
 
-    cap.set(cv2.CAP_PROP_FRAME_WIDTH, 640)
-    cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 480)
+    cap.set(cv2.CAP_PROP_FRAME_WIDTH, 320)
+    cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 240)
 
     return cap
 def close_cam(cap):
