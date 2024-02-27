@@ -33,7 +33,7 @@ def detect_ducks(image: np.ndarray) -> list[cv2.KeyPoint]:
     cv2.imshow("smol", smol_img)
     cv2.imshow("yellows", yellows)
 
-    if (yellows < 0).any():
+    if (yellows <= 0).any():
         print("there is a duck")
     yellow_mask = (yellows > 0).astype(np.uint8) * 255  # Masks that is 0 in yellow regions
     cv2.imshow("yellow_mask",yellow_mask)
