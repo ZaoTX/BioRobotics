@@ -30,7 +30,7 @@ def detect_ducks(image: np.ndarray) -> list[cv2.KeyPoint]:
     smol_img = cv2.resize(image, (128, 128), interpolation=cv2.INTER_LINEAR)
     yellows = np.apply_along_axis(distance_to_yellow, -1, smol_img)
     # cv2.imshow("smol", smol_img)
-    # cv2.imshow("yellows", yellows)
+    cv2.imshow("yellows", yellows)
 
     if (yellows <= np.pi/4).any():
         print("there is A duck")
