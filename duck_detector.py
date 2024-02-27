@@ -31,12 +31,18 @@ def detect_ducks(image: np.ndarray) -> list[cv2.KeyPoint]:
     smol_img = cv2.resize(image, (128, 128), interpolation=cv2.INTER_LINEAR)
     yellows = np.apply_along_axis(distance_to_yellow, -1, smol_img)
     cv2.imshow("smol", smol_img)
-    cv2.imshow("yellows", yellows)
+    print(f'smol_img: {smol_img.shape} {smol_img.dtype}')
+    # yellows2 = (yellows - yellows.min()) * (yellows.max() - yellows.min()) / 255
+    yellows2 = np.interp(yellows, (yellows.min(), yellows.max()), (0, 255))#.astype(np.uint8)
+    print(f'yellows: {yellows.shape} {yellows.dtype}')
+    print(f'yellows2: {yellows2.shape} {yellows2.dtype}')
+    cv2.imshow("yellows", yellows2)
 
-    if (yellows <= 0).any():
-        print("there is a duck")
-    yellow_mask = (yellows > 0).astype(np.uint8) * 255  # Masks that is 0 in yellow regions
-    cv2.imshow("yellow_mask",yellow_mask)
+    #if (yellows2 < 30).any:
+    #    print("there is a duck")
+    yellow_mask = (yellows2 > 50).astype(np.uint8) * 255  # Masks that is 0 in yellow regions
+    cv2.imshow("yellow_mask", yellow_mask)
+    print(f'yellow_mask: {yellow_mask.shape} {yellow_mask.dtype}')
     # Do a blob detection to detect regions of zeroes in the yellow mask
     params = cv2.SimpleBlobDetector_Params()
     params.minArea = 4*5  # Not a single pixel I guess...
@@ -45,13 +51,13 @@ def detect_ducks(image: np.ndarray) -> list[cv2.KeyPoint]:
     detector = cv2.SimpleBlobDetector.create(params)
     keypoints = detector.detect(yellow_mask)
     img_with_keypoints = cv2.drawKeypoints(smol_img, keypoints, np.array([]), (0, 0, 255), cv2.DRAW_MATCHES_FLAGS_DRAW_RICH_KEYPOINTS)
-    #cv2.imshow("kps", img_with_keypoints)
+    cv2.imshow("kps", img_with_keypoints)
     cv2.waitKey(0)
     return list(keypoints)
 
 
 if __name__ == "__main__":
-    for root, _, f_names in os.walk("ducks"):
+    for root, _, f_names in os.walk("Ducks"):
         for f_name in f_names:
             # Read the image, shrink, apply "distance to yellow" filter
             filename = f'{root}/{f_name}'
