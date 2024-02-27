@@ -1,6 +1,5 @@
 import os
 import sys
-
 import cv2
 import numpy as np
 
@@ -30,17 +29,13 @@ def detect_ducks(image: np.ndarray) -> list[cv2.KeyPoint]:
     # Read the image, shrink, apply "distance to yellow" filter
     smol_img = cv2.resize(image, (128, 128), interpolation=cv2.INTER_LINEAR)
     yellows = np.apply_along_axis(distance_to_yellow, -1, smol_img)
-    cv2.imshow("smol", smol_img)
+    yellows = np.interp(yellows, (yellows.min(), yellows.max()), (0, 255))
     print(f'smol_img: {smol_img.shape} {smol_img.dtype}')
-    # yellows2 = (yellows - yellows.min()) * (yellows.max() - yellows.min()) / 255
-    yellows2 = np.interp(yellows, (yellows.min(), yellows.max()), (0, 255))#.astype(np.uint8)
     print(f'yellows: {yellows.shape} {yellows.dtype}')
-    print(f'yellows2: {yellows2.shape} {yellows2.dtype}')
-    cv2.imshow("yellows", yellows2)
+    # cv2.imshow("smol", smol_img)
+    # cv2.imshow("yellows", yellows)
 
-    #if (yellows2 < 30).any:
-    #    print("there is a duck")
-    yellow_mask = (yellows2 > 50).astype(np.uint8) * 255  # Masks that is 0 in yellow regions
+    yellow_mask = (yellows > 50).astype(np.uint8) * 255  # Masks that is 0 in yellow regions
     cv2.imshow("yellow_mask", yellow_mask)
     print(f'yellow_mask: {yellow_mask.shape} {yellow_mask.dtype}')
     # Do a blob detection to detect regions of zeroes in the yellow mask
@@ -51,8 +46,8 @@ def detect_ducks(image: np.ndarray) -> list[cv2.KeyPoint]:
     detector = cv2.SimpleBlobDetector.create(params)
     keypoints = detector.detect(yellow_mask)
     img_with_keypoints = cv2.drawKeypoints(smol_img, keypoints, np.array([]), (0, 0, 255), cv2.DRAW_MATCHES_FLAGS_DRAW_RICH_KEYPOINTS)
-    cv2.imshow("kps", img_with_keypoints)
-    cv2.waitKey(0)
+    # cv2.imshow("kps", img_with_keypoints)
+    # cv2.waitKey(0)
     return list(keypoints)
 
 
