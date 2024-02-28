@@ -1,5 +1,7 @@
 import math
 
+from picamera.array import PiRGBArray
+import picamera
 import cv2
 from simple_pid.pid import PID
 import numpy as np
@@ -156,31 +158,30 @@ def analyse_image(image):
         print("QR Code not detected")
         return False, 0
 def control_car(dry_run=False):
-    cap = init_cam()
     killer = GracefulKiller()
-    image_ori,image = get_image(cap, killer)
-    qrcode_detected,time_needed=  analyse_image(image_ori)
+    #image_ori,image = get_image(cap, killer)
+    #
     paused = False
     last_detection_time = 0
-    while not killer.kill_now:
-        if not qrcode_detected:
-            if not paused:
-                image_ori, image = get_image(cap, killer)
-            qrcode_detected, time_needed = analyse_image(image_ori)
+    camera = picamera.PiCamera()
+    camera.resolution = (640, 480)
+    rawCapture = picamera.array.PiRGBArray(camera, size=(640, 480))
+    for frame in camera.capture_continuous(rawCapture, format="rgb", use_video_port=True):
+        if not killer.kill_now:
+            image_ori = frame.array
+            image_gray = cv2.cvtColor(image_ori, cv2.COLOR_RGB2GRAY)
+            qrcode_detected, time_needed = analyse_image(image_gray)
             if qrcode_detected:
                 # Pause the camera capture
                 last_detection_time = time.time()
-                paused = True
-                cap.release()
-                print("Camera paused")
-        else:
-            # Check if it's time to resume
-            if time.time() - last_detection_time > time_needed:
-                cap = init_cam()
-                paused = False
-                qrcode_detected = False
-                print("Camera resumed after time needed")
-
+                time.sleep(time_needed)
+                print("Camera paused for"+ str(time_needed))
+            # image_ori, image = get_image(cap, killer)
+            cv2.imshow("Image", image_gray)
+            rawCapture.truncate(0)
+            key = cv2.waitKey(1) & 0xFF
+            if key == ord("q"):
+                break
 
 
 def close_cam(cap):
