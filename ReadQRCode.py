@@ -140,8 +140,8 @@ def Stop10s(linv_ori, angv_ori):
     set_car_control(linear_v=linv_ori, angular_v=angv_ori)
 
     return 10
-def analyse_image(image):
-    GRAY_image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+def analyse_image(image): # takes RGB as input
+    GRAY_image = cv2.cvtColor(image, cv2.COLOR_RGB2GRAY)
     barcodes = decode(GRAY_image)
     if len(barcodes) > 0:
         print("Decoded Data : {}".format(barcodes))
@@ -169,8 +169,7 @@ def control_car(dry_run=False):
     for frame in camera.capture_continuous(rawCapture, format="rgb", use_video_port=True):
         if not killer.kill_now:
             image_ori = frame.array
-            image_gray = cv2.cvtColor(image_ori, cv2.COLOR_RGB2GRAY)
-            qrcode_detected, time_needed = analyse_image(image_gray)
+            qrcode_detected, time_needed = analyse_image(image_ori)
             if qrcode_detected:
                 # Pause the camera capture
                 last_detection_time = time.time()
