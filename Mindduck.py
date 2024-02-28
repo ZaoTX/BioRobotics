@@ -115,9 +115,14 @@ def detect_yellow_area(image):
     res = cv2.bitwise_and(image, image, mask=mask)
 
     # Check if there's yellow in the image
-    yellow_present = np.any(mask)
+    params = cv2.SimpleBlobDetector_Params()
+    params.minArea = 4*5  # Not a single pixel I guess...
+    params.filterByInertia = False
+    params.filterByConvexity = False  # Duck is not very convex...
+    detector = cv2.SimpleBlobDetector.create(params)
+    keypoints = detector.detect(res)
     # Print the result
-    if yellow_present:
+    if len(keypoints) > 0:
         print("Yellow detected in the image!")
     else:
         print("No yellow detected in the image.")
@@ -129,8 +134,8 @@ def control_car(dry_run=False):
     for frame in camera.capture_continuous(rawCapture, format="rgb", use_video_port=True):
         if not killer.kill_now:
             image_ori = frame.array
-            image_ori =cv2.cvtColor(image_ori, cv2.COLOR_BGR2RGB)
-            cv2.imshow("Image", image_ori)
+            image_rgb =cv2.cvtColor(image_ori, cv2.COLOR_BGR2RGB)
+            cv2.imshow("Image", image_rgb)
             detect_yellow_area(image_ori)
             rawCapture.truncate(0)
             key = cv2.waitKey(1) & 0xFF
