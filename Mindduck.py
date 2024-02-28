@@ -105,7 +105,7 @@ def control_car(dry_run=False):
     camera = picamera.PiCamera()
     camera.resolution = (640, 480)
     rawCapture = picamera.array.PiRGBArray(camera, size=(640, 480))
-    for frame in camera.capture_continuous(rawCapture, format="rgb", use_video_port=True):
+    for frame in camera.capture_continuous(rawCapture, format="gbr", use_video_port=True):
         if not killer.kill_now:
             image_ori = frame.array
             #image_ori, image = get_image(cap, killer)
