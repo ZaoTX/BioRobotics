@@ -11,7 +11,7 @@ rawCapture = picamera.array.PiRGBArray(camera,size=(640,480))
 for frame in camera.capture_continuous(rawCapture,format="rgb",use_video_port=True):
     image = frame.array
     img_bottom = image[-300:,:]
-    img, dir, angle, centorid_x  = LineDetection.preprocessImagpythoe(img_bottom)
+    img, dir, angle, centorid_x  = LineDetection.preprocessImage(img_bottom)
     #LineDetection.LineInterpretation(contour)
     cv2.imshow("Image with line detection",img)
     rawCapture .truncate(0)
