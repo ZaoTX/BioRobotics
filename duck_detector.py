@@ -39,16 +39,16 @@ def detect_ducks(image: np.ndarray) -> list[cv2.KeyPoint]:
     #cv2.imshow("yellow_mask", yellow_mask)
     print(f'yellow_mask: {yellow_mask.shape} {yellow_mask.dtype}')
     # Do a blob detection to detect regions of zeroes in the yellow mask
-    params = cv2.SimpleBlobDetector_Params()
-    params.minArea = 4*5  # Not a single pixel I guess...
-    params.filterByInertia = False
-    params.filterByConvexity = False  # Duck is not very convex...
-    detector = cv2.SimpleBlobDetector.create(params)
-    keypoints = detector.detect(yellow_mask)
+    # params = cv2.SimpleBlobDetector_Params()
+    # params.minArea = 4*5  # Not a single pixel I guess...
+    # params.filterByInertia = False
+    # params.filterByConvexity = False  # Duck is not very convex...
+    # detector = cv2.SimpleBlobDetector.create(params)
+    # keypoints = detector.detect(yellow_mask)
     # img_with_keypoints = cv2.drawKeypoints(smol_img, keypoints, np.array([]), (0, 0, 255), cv2.DRAW_MATCHES_FLAGS_DRAW_RICH_KEYPOINTS)
     # cv2.imshow("kps", img_with_keypoints)
     # cv2.waitKey(0)
-    return list(keypoints)
+    return '' #list(keypoints)
 
 
 if __name__ == "__main__":

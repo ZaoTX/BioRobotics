@@ -102,17 +102,14 @@ def set_car_control(linear_v, angular_v):
     return
 def control_car(dry_run=False):
     killer = GracefulKiller()
-
-
-
-if __name__ == "__main__":
     camera = picamera.PiCamera()
     camera.resolution = (640, 480)
     rawCapture = picamera.array.PiRGBArray(camera, size=(640, 480))
     for frame in camera.capture_continuous(rawCapture, format="rgb", use_video_port=True):
+        if not killer.kill_now:
             image_ori = frame.array
             image_gbr = cv2.cvtColor(image_ori, cv2.COLOR_RGB2BGR)
-            # image_ori, image = get_image(cap, killer)
+            #image_ori, image = get_image(cap, killer)
             keypoints = duck_detector.detect_ducks(image_ori)
             cv2.imshow("Image", image_gbr)
             rawCapture.truncate(0)
@@ -123,4 +120,15 @@ if __name__ == "__main__":
                 print(f'has ducks')
             else:
                 print(f'DOES NOT have ducks')
+
+
+if __name__ == "__main__":
+    from argparse import ArgumentParser
+
+    parser = ArgumentParser()
+    parser.add_argument("-d", "--dry",
+                        action="store_true", default=False,
+                        help="do not drive motor")
+    args = parser.parse_args()
+    control_car(args.dry)
 
