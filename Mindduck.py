@@ -1,5 +1,6 @@
 import duck_detector
 import math
+from picamera.array import PiRGBArray
 import picamera
 import cv2
 from simple_pid.pid import PID
@@ -118,19 +119,6 @@ def control_car(dry_run=False):
         #     print(f'has ducks')
         # else:
         #     print(f'DOES NOT have ducks')
-
-def init_cam():
-    cap = cv2.VideoCapture(0)
-
-    if not (cap.isOpened()):
-        raise Exception("Camera is not available")
-
-    cap.set(cv2.CAP_PROP_FRAME_WIDTH, 320)
-    cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 240)
-
-    return cap
-def close_cam(cap):
-    cap.release()
 
 
 if __name__ == "__main__":
