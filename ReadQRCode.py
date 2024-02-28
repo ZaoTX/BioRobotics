@@ -176,7 +176,7 @@ def control_car(dry_run=False):
                 time.sleep(time_needed)
                 print("Camera paused for"+ str(time_needed))
             # image_ori, image = get_image(cap, killer)
-            cv2.imshow("Image", image_gray)
+            cv2.imshow("Image", image_ori)
             rawCapture.truncate(0)
             key = cv2.waitKey(1) & 0xFF
             if key == ord("q"):
