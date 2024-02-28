@@ -1,6 +1,6 @@
 import duck_detector
 import math
-
+import picamera
 import cv2
 from simple_pid.pid import PID
 import numpy as np
@@ -100,16 +100,19 @@ def set_car_control(linear_v, angular_v):
 
     return
 def control_car(dry_run=False):
-    cap = init_cam()
     killer = GracefulKiller()
-    image_ori,image = get_image(cap, killer)
-    last_detection_time = 0
-    while not killer.kill_now:
-        image_ori, image = get_image(cap, killer)
-        #keypoints = duck_detector.detect_ducks(image_ori)
-        cv2.imshow("Image", image_ori)
-        key = cv2.waitKey(1) & 0xFF
-        if key == ord("q"):
+    camera = picamera.PiCamera()
+    camera.resolution = (640, 480)
+    rawCapture = picamera.array.PiRGBArray(camera, size=(640, 480))
+    for frame in camera.capture_continuous(rawCapture, format="rgb", use_video_port=True):
+        if not killer.kill_now:
+            image_ori = frame.array
+            #image_ori, image = get_image(cap, killer)
+            #keypoints = duck_detector.detect_ducks(image_ori)
+            cv2.imshow("Image", image_ori)
+            rawCapture.truncate(0)
+            key = cv2.waitKey(1) & 0xFF
+            if key == ord("q"):
                 break
         # if len(keypoints) > 0:
         #     print(f'has ducks')
