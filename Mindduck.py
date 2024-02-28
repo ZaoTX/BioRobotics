@@ -100,6 +100,27 @@ def set_car_control(linear_v, angular_v):
     set_speed(left_in, right_in)
 
     return
+def detect_yellow_area(image):
+    # Convert BGR image to HSV
+    hsv = cv2.cvtColor(image, cv2.COLOR_RGB2HSV)
+
+    # Define range of yellow color in HSV
+    lower_yellow = np.array([20, 100, 100])
+    upper_yellow = np.array([30, 255, 255])
+
+    # Threshold the HSV image to get only yellow colors
+    mask = cv2.inRange(hsv, lower_yellow, upper_yellow)
+
+    # Bitwise-AND mask and original image
+    res = cv2.bitwise_and(image, image, mask=mask)
+
+    # Check if there's yellow in the image
+    yellow_present = np.any(mask)
+    # Print the result
+    if yellow_present:
+        print("Yellow detected in the image!")
+    else:
+        print("No yellow detected in the image.")
 def control_car(dry_run=False):
     killer = GracefulKiller()
     camera = picamera.PiCamera()
@@ -108,18 +129,14 @@ def control_car(dry_run=False):
     for frame in camera.capture_continuous(rawCapture, format="rgb", use_video_port=True):
         if not killer.kill_now:
             image_ori = frame.array
-            image_gbr = cv2.cvtColor(image_ori, cv2.COLOR_RGB2BGR)
             #image_ori, image = get_image(cap, killer)
-            keypoints = duck_detector.detect_ducks(image_ori)
-            cv2.imshow("Image", image_gbr)
+            detect_yellow_area(image_ori)
+            cv2.imshow("Image", image_ori)
             rawCapture.truncate(0)
             key = cv2.waitKey(1) & 0xFF
             if key == ord("q"):
                 break
-            if len(keypoints) > 0:
-                print(f'has ducks')
-            else:
-                print(f'DOES NOT have ducks')
+
 
 
 if __name__ == "__main__":
