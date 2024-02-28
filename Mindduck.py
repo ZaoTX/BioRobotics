@@ -135,7 +135,7 @@ def control_car(dry_run=False):
         if not killer.kill_now:
             image_ori = frame.array
             image_rgb =cv2.cvtColor(image_ori, cv2.COLOR_BGR2RGB)
-            cv2.imshow("Image", image_rgb)
+            cv2.imshow("Image", image_ori)
             detect_yellow_area(image_ori)
             rawCapture.truncate(0)
             key = cv2.waitKey(1) & 0xFF
