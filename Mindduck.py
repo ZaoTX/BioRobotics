@@ -129,7 +129,7 @@ def control_car(dry_run=False):
     for frame in camera.capture_continuous(rawCapture, format="rgb", use_video_port=True):
         if not killer.kill_now:
             image_ori = frame.array
-            image_ori =cv2.cvtColor(image_ori, cv2.COLOR_BAYER_GBRG2RGB)
+            image_ori =cv2.cvtColor(image_ori, cv2.COLOR_BGR2RGB)
             cv2.imshow("Image", image_ori)
             detect_yellow_area(image_ori)
             rawCapture.truncate(0)
