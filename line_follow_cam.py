@@ -189,10 +189,11 @@ def control_car(dry_run=False):
     image_middle = int(image_init.shape[1] / 2)
     controller = PID(1, 0.1, 0.05, setpoint=image_middle, output_limits=(0, 6.28), starting_output=3.14,
                      sample_time=1. / 30.)
+    current_position = image_middle
     for frame in camera.capture_continuous(rawCapture, format="rgb", use_video_port=True):
 
         if not killer.kill_now:
-            start_time = time()
+            start_time = time.time()
             angular_v = controller(current_position) - 3.14
             # linear_v = 400 - abs(angular_v * 100 / 3.14)
             linear_v = 300
@@ -209,7 +210,7 @@ def control_car(dry_run=False):
             current_position = analyze_image(image, current_position)
             print(f"current line position: {current_position}")
 
-            elipsed_time = time() - start_time
+            elipsed_time = time.time() - start_time
 
             print(f"===== processing time: {elipsed_time} s =====")
 
