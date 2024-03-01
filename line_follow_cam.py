@@ -176,7 +176,7 @@ def control_car(dry_run=False):
     controller = PID(1, 0.1, 0.05, setpoint=image_middle, output_limits=(0, 6.28), starting_output=3.14,
                      sample_time=1. / 30.)
     current_position = image_middle
-    linear_v = 100
+    linear_v = 300
     angular_v = 0
     for frame in camera.capture_continuous(rawCapture, format="rgb", use_video_port=True):
 
