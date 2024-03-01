@@ -193,7 +193,7 @@ def control_car(dry_run=False):
         image_ori = frame.array
         image = get_image(image_ori)
         current_position = analyze_image(image, current_position)
-        image_dot = cv2.circle(image_ori, (current_position, 0), radius=0, color=(0, 0, 255), thickness=-1)
+        image_dot = cv2.circle(image_ori, (current_position, 240), radius=1, color=(255, 0, 0), thickness=1)
         print(f"current line position: {current_position}")
 
         elipsed_time = time.time() - start_time
