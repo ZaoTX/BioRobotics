@@ -183,7 +183,7 @@ def control_car():
         #angular_v = angular_v * 15  # remap to (-100, 100), left positive, right negative
 
         # linear_v = 400 - abs(angular_v * 100 / 3.14)
-        linear_v = 300
+        linear_v = 400
         if (current_position < (image.shape[1] / 5)) or (current_position > (image.shape[1] - image.shape[1] / 5)):
             linear_v = 200
             angular_v = angular_v * 3
@@ -194,7 +194,7 @@ def control_car():
         image_ori = frame.array
         image = get_image(image_ori)
         current_position = analyze_image(image, current_position)
-        image_dot = cv2.circle(image_ori, (current_position, 240), radius=1, color=(255, 0, 0), thickness=1)
+        image_dot = cv2.circle(image_ori, (current_position, 240), radius=1, color=(0, 0, 255), thickness=1)
         print(f"current line position: {current_position}")
 
         elipsed_time = time.time() - start_time
