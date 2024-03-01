@@ -136,17 +136,6 @@ def analyze_image(image, prev_value):
     return current_value
 
 
-def init_cam():
-    cap = cv2.VideoCapture(0)
-
-    if not (cap.isOpened()):
-        raise Exception("Camera is not available")
-
-    cap.set(cv2.CAP_PROP_FRAME_WIDTH, 640)
-    cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 480)
-
-    return cap
-
 
 def get_image(frame, killer):
     # read image from pi car camera
@@ -158,9 +147,6 @@ def get_image(frame, killer):
     cv2.imwrite("last_frame.png", frame)
     return frame
 
-
-def close_cam(cap):
-    cap.release()
 
 
 def set_car_control(linear_v, angular_v):
@@ -216,8 +202,12 @@ def control_car(dry_run=False):
 
             print(f"===== processing time: {elipsed_time} s =====")
 
-        set_speed(0, 0)
-        print("process terminated")
+            set_speed(0, 0)
+            print("process terminated")
+            rawCapture.truncate(0)
+            key = cv2.waitKey(1) & 0xFF
+            if key == ord("q"):
+                break
 
 
 if __name__ == "__main__":
