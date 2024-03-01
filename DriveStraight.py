@@ -173,25 +173,11 @@ def control_car(dry_run=False):
     controller = PID(1, 0.1, 0.05, setpoint=image_middle, output_limits=(0, 6.28), starting_output=3.14,
                      sample_time=1. / 30.)
     current_position = image_middle
-    linear_v = 500
-    angular_v = 0
-    set_car_control(linear_v, angular_v)
 
     for frame in camera.capture_continuous(rawCapture, format="rgb", use_video_port=True):
+        angular_v = 0
+        linear_v = 300
         set_car_control(linear_v, angular_v)
-        print(f"Set speed lin: {linear_v}, ang: {angular_v}")
-
-        image_ori = frame.array
-        image = get_image(image_ori)
-        current_position = analyze_image(image, current_position)
-        image_dot = cv2.circle(image_ori, (current_position, 0), radius=0, color=(0, 0, 255), thickness=-1)
-        print(f"current line position: {current_position}")
-
-        elipsed_time = time.time() - start_time
-
-        print(f"===== processing time: {elipsed_time} s =====")
-
-
 
         rawCapture.truncate(0)
         cv2.imshow("Image", image_dot)
