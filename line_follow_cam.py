@@ -188,9 +188,9 @@ def control_car():
         #angular_v = angular_v * 15  # remap to (-100, 100), left positive, right negative
         angular_v *=2
         # linear_v = 400 - abs(angular_v * 100 / 3.14)
-        linear_v = 400
+        linear_v = 300
         if (current_position < (image.shape[1] / 5)) or (current_position > (image.shape[1] - image.shape[1] / 5)):
-            linear_v = 300
+            linear_v = 0
             angular_v = angular_v * 4
 
         set_car_control(linear_v, angular_v)
