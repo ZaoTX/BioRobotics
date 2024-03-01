@@ -137,11 +137,8 @@ def analyze_image(image, prev_value):
 
 
 
-def get_image(frame, killer):
+def get_image(frame):
     # read image from pi car camera
-
-    if killer.kill_now:
-        return np.zeros((480, 640))
     frame = cv2.cvtColor(frame, cv2.COLOR_RGB2GRAY)
     # save last frame
     cv2.imwrite("last_frame.png", frame)
@@ -166,8 +163,6 @@ def set_car_control(linear_v, angular_v):
     return
 
 def control_car(dry_run=False):
-    killer = GracefulKiller()
-
     camera = picamera.PiCamera()
     camera.resolution = (640, 480)
     rawCapture = picamera.array.PiRGBArray(camera, size=(640, 480))
@@ -176,13 +171,13 @@ def control_car(dry_run=False):
     controller = PID(1, 0.1, 0.05, setpoint=image_middle, output_limits=(0, 6.28), starting_output=3.14,
                      sample_time=1. / 30.)
     current_position = image_middle
-    linear_v = 500
+    linear_v = 300
     angular_v = 0
     for frame in camera.capture_continuous(rawCapture, format="rgb", use_video_port=True):
             start_time = time.time()
             angular_v = controller(current_position) - 3.14
             # linear_v = 400 - abs(angular_v * 100 / 3.14)
-            linear_v = 500
+            linear_v = 300
             if (current_position < (image.shape[1] / 5)) or (current_position > (image.shape[1] - image.shape[1] / 5)):
                 linear_v = 0
                 angular_v = angular_v * 5
@@ -192,7 +187,7 @@ def control_car(dry_run=False):
             print(f"Set speed lin: {linear_v}, ang: {angular_v}")
 
             image_ori = frame.array
-            image = get_image(image_ori, killer)
+            image = get_image(image_ori)
             current_position = analyze_image(image, current_position)
             print(f"current line position: {current_position}")
 
