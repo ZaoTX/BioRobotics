@@ -183,8 +183,8 @@ def control_car(dry_run=False):
         # linear_v = 400 - abs(angular_v * 100 / 3.14)
         linear_v = 500
         if (current_position < (image.shape[1] / 5)) or (current_position > (image.shape[1] - image.shape[1] / 5)):
-            linear_v = 0
-            angular_v = angular_v * 30
+            linear_v = 200
+            angular_v = angular_v * 3
 
         if not dry_run:
             set_car_control(linear_v, angular_v)
@@ -193,6 +193,7 @@ def control_car(dry_run=False):
         image_ori = frame.array
         image = get_image(image_ori)
         current_position = analyze_image(image, current_position)
+        image_dot = cv2.circle(image_ori, (current_position, 0), radius=0, color=(0, 0, 255), thickness=-1)
         print(f"current line position: {current_position}")
 
         elipsed_time = time.time() - start_time
@@ -202,6 +203,7 @@ def control_car(dry_run=False):
         set_speed(0, 0)
         print("process terminated")
         rawCapture.truncate(0)
+        cv2.imshow("Image", image_dot)
         key = cv2.waitKey(1) & 0xFF
         if key == ord("q"):
             break
