@@ -186,7 +186,7 @@ def control_car():
         linear_v = 400
         if (current_position < (image.shape[1] / 5)) or (current_position > (image.shape[1] - image.shape[1] / 5)):
             linear_v = 300
-            angular_v = angular_v * 5
+            angular_v = angular_v * 4
 
         set_car_control(linear_v, angular_v)
         print(f"Set speed lin: {linear_v}, ang: {angular_v}")
