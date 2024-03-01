@@ -180,7 +180,7 @@ def control_car():
     for frame in camera.capture_continuous(rawCapture, format="rgb", use_video_port=True):
         start_time = time.time()
         angular_v = controller(current_position) - 3.14
-        angular_v = angular_v * 15  # remap to (-100, 100), left positive, right negative
+        #angular_v = angular_v * 15  # remap to (-100, 100), left positive, right negative
 
         # linear_v = 400 - abs(angular_v * 100 / 3.14)
         linear_v = 300
