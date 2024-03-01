@@ -181,12 +181,12 @@ def control_car():
         start_time = time.time()
         angular_v = controller(current_position) - 3.14
         #angular_v = angular_v * 15  # remap to (-100, 100), left positive, right negative
-
+        angular_v *=2
         # linear_v = 400 - abs(angular_v * 100 / 3.14)
         linear_v = 400
         if (current_position < (image.shape[1] / 5)) or (current_position > (image.shape[1] - image.shape[1] / 5)):
-            linear_v = 200
-            angular_v = angular_v * 3
+            linear_v = 300
+            angular_v = angular_v * 5
 
         set_car_control(linear_v, angular_v)
         print(f"Set speed lin: {linear_v}, ang: {angular_v}")
