@@ -132,10 +132,10 @@ def analyze_image(image, prev_value):
         current_value = root_index
         current_value = image.shape[1] if binary_img[:, middle:].sum() > binary_img[:, :middle].sum() else 0
     elif abs(middle_index - middle) < abs(root_index - middle):
-        print("middle closer")
+        #print("middle closer")
         current_value = middle_index
     else:
-        print("root closer")
+        #print("root closer")
         current_value = root_index
 
     return current_value
@@ -194,7 +194,7 @@ def control_car():
             angular_v = angular_v * 4
 
         set_car_control(linear_v, angular_v)
-        #print(f"Set speed lin: {linear_v}, ang: {angular_v}")
+        print(f"Set speed lin: {linear_v}, ang: {angular_v}")
 
         image_ori = frame.array
         img_bottom = image_ori[-400:, :]
