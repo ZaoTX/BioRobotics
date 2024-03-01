@@ -200,12 +200,12 @@ def control_car(dry_run=False):
 
         print(f"===== processing time: {elipsed_time} s =====")
 
-        set_speed(0, 0)
-        print("process terminated")
         rawCapture.truncate(0)
         cv2.imshow("Image", image_dot)
         key = cv2.waitKey(1) & 0xFF
         if key == ord("q"):
+            set_speed(0, 0)
+            print("process terminated")
             break
 
 

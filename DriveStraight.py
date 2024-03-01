@@ -1,12 +1,20 @@
 from picamera.array import PiRGBArray
-import numpy as np
-import cv2
 import picamera
-import LineDetection
-
-# Car control
+import cv2
+from simple_pid.pid import PID
+import numpy as np
+import time
+import signal
+from pyzbar.pyzbar import decode
 import Adafruit_PCA9685
 import RPi.GPIO as GPIO
+
+pwm = Adafruit_PCA9685.PCA9685()
+# Set frequency to 60hz, good for servos.
+pwm.set_pwm_freq(60)
+GPIO.setmode(GPIO.BCM)  # GPIO number  in BCM mode
+GPIO.setwarnings(False)
+
 pwm = Adafruit_PCA9685.PCA9685()
 # Set frequency to 60hz, good for servos.
 pwm.set_pwm_freq(60)
@@ -36,7 +44,7 @@ GPIO.setup(IN2, GPIO.OUT)
 GPIO.setup(IN3, GPIO.OUT)
 GPIO.setup(IN4, GPIO.OUT)
 
-#direct take the code for car control
+
 def set_speed(speed_left, speed_right):
     # make all motors moving forward at the speed of variable move_speed
     if speed_left < 0:
@@ -57,20 +65,148 @@ def set_speed(speed_left, speed_right):
 
     pwm.set_pwm(ENA, 0, int(speed_left))
     pwm.set_pwm(ENB, 0, int(speed_right))
-camera = picamera.PiCamera()
-camera.resolution = (640,480)
-rawCapture = picamera.array.PiRGBArray(camera,size=(640,480))
 
-for frame in camera.capture_continuous(rawCapture,format="rgb",use_video_port=True):
-    image = frame.array
-    img_bottom = image[-300:,:]
-    img, dir, angle = LineDetection.preprocessImage(img_bottom)
-    #LineDetection.LineInterpretation(contour)
 
-    set_speed(1400,1400)
-    cv2.imshow("Image with line detection",img)
-    rawCapture .truncate(0)
-    key = cv2.waitKey(1) & 0xFF
-    if key == ord("q"):
-        set_speed(0, 0)
-        break
+class GracefulKiller:
+    kill_now = False
+
+    def __init__(self):
+        signal.signal(signal.SIGINT, self.exit_gracefully)
+        signal.signal(signal.SIGTERM, self.exit_gracefully)
+
+    def exit_gracefully(self, signum, frame):
+        self.kill_now = True
+
+
+# controller for driving the car
+def find_white_pix(line, middle_idx):
+    pos = None
+    index = None
+
+    if line[middle_idx] > 0:
+        pos = 'middle'
+        index = middle_idx
+    else:
+        for i in range(middle_idx):
+            try:
+                if line[middle_idx + i + 1] > 0:
+                    pos = 'right'
+                    index = middle_idx + i + 1
+                    break
+            except:
+                pass
+
+            try:
+                if line[middle_idx - i - 1] > 0:
+                    pos = 'left'
+                    index = middle_idx - i - 1
+                    break
+            except:
+                pass
+
+    return pos, index
+
+
+def analyze_image(image, prev_value):
+    img_bottom = image[-300:, :]
+    blur = cv2.GaussianBlur(img_bottom, (5, 5), 0)
+    ret, binary_img = cv2.threshold(blur, 0, 255, cv2.THRESH_BINARY_INV + cv2.THRESH_OTSU)
+
+    base_line = binary_img[-1]
+    middle = int(base_line.shape[0] / 2)
+
+    root_pos, root_index = find_white_pix(base_line, middle)
+    middle_pos, middle_index = find_white_pix(binary_img[-30], middle)
+
+    current_value = 0
+
+    if root_index is None:
+        if middle_index is not None:
+            current_value = middle_index
+        else:
+            current_value = prev_value
+    elif middle_index is None:
+        current_value = root_index
+        current_value = image.shape[1] if binary_img[:, middle:].sum() > binary_img[:, :middle].sum() else 0
+    elif abs(middle_index - middle) < abs(root_index - middle):
+        current_value = middle_index
+    else:
+        current_value = root_index
+
+    return current_value
+
+
+
+def get_image(frame):
+    # read image from pi car camera
+    frame = cv2.cvtColor(frame, cv2.COLOR_RGB2GRAY)
+    # save last frame
+    cv2.imwrite("last_frame.png", frame)
+    return frame
+
+
+
+def set_car_control(linear_v, angular_v):
+    # map from speed to wheel motor input
+    a, b = 0.0008603150562323695, -0.2914328262712497
+    diff = (angular_v - b) / a
+    j, k = 0.06430834737443417, 78.99787271119764
+    sum = (linear_v - k) / j
+
+    left_in = (diff + sum) / 2.
+    right_in = sum - left_in
+
+    # drive car with left and right control
+    print(left_in, right_in)
+    set_speed(left_in, right_in)
+
+    return
+
+def control_car(dry_run=False):
+    camera = picamera.PiCamera()
+    camera.resolution = (640, 480)
+    rawCapture = picamera.array.PiRGBArray(camera, size=(640, 480))
+    rawCapture.truncate(0)
+    image = np.zeros((480, 640))
+    camera.capture(image, 'rgb')
+    image_middle = int(image.shape[1] / 2)
+    controller = PID(1, 0.1, 0.05, setpoint=image_middle, output_limits=(0, 6.28), starting_output=3.14,
+                     sample_time=1. / 30.)
+    current_position = image_middle
+    linear_v = 500
+    angular_v = 0
+    set_car_control(linear_v, angular_v)
+
+    for frame in camera.capture_continuous(rawCapture, format="rgb", use_video_port=True):
+        set_car_control(linear_v, angular_v)
+        print(f"Set speed lin: {linear_v}, ang: {angular_v}")
+
+        image_ori = frame.array
+        image = get_image(image_ori)
+        current_position = analyze_image(image, current_position)
+        image_dot = cv2.circle(image_ori, (current_position, 0), radius=0, color=(0, 0, 255), thickness=-1)
+        print(f"current line position: {current_position}")
+
+        elipsed_time = time.time() - start_time
+
+        print(f"===== processing time: {elipsed_time} s =====")
+
+
+        print("process terminated")
+        rawCapture.truncate(0)
+        cv2.imshow("Image", image_dot)
+        key = cv2.waitKey(1) & 0xFF
+        if key == ord("q"):
+            set_speed(0, 0)
+            break
+
+
+if __name__ == "__main__":
+    from argparse import ArgumentParser
+
+    parser = ArgumentParser()
+    parser.add_argument("-d", "--dry",
+                        action="store_true", default=False,
+                        help="do not drive motor")
+    args = parser.parse_args()
+    control_car(args.dry)
