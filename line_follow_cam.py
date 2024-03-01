@@ -185,7 +185,7 @@ def control_car(dry_run=False):
     camera = picamera.PiCamera()
     camera.resolution = (640, 480)
     rawCapture = picamera.array.PiRGBArray(camera, size=(640, 480))
-    image = np.zeros((640, 480))
+    image = cv2.imread("last_frame.png")
     image_middle = int(image.shape[1] / 2)
     controller = PID(1, 0.1, 0.05, setpoint=image_middle, output_limits=(0, 6.28), starting_output=3.14,
                      sample_time=1. / 30.)
