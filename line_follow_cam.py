@@ -162,7 +162,7 @@ def set_car_control(linear_v, angular_v):
 
     return
 
-def control_car(dry_run=False):
+def control_car():
     camera = picamera.PiCamera()
     camera.framerate = 30
     camera.resolution = (640, 480)
@@ -188,8 +188,7 @@ def control_car(dry_run=False):
             linear_v = 200
             angular_v = angular_v * 3
 
-        if not dry_run:
-            set_car_control(linear_v, angular_v)
+        set_car_control(linear_v, angular_v)
         print(f"Set speed lin: {linear_v}, ang: {angular_v}")
 
         image_ori = frame.array
@@ -219,4 +218,4 @@ if __name__ == "__main__":
                         action="store_true", default=False,
                         help="do not drive motor")
     args = parser.parse_args()
-    control_car(args.dry)
+    control_car()
