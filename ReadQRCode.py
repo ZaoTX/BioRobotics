@@ -158,29 +158,22 @@ def analyse_image(image): # takes RGB as input
         print("QR Code not detected")
         return False, 0
 def control_car(dry_run=False):
-    killer = GracefulKiller()
-    #image_ori,image = get_image(cap, killer)
-    #
-    paused = False
-    last_detection_time = 0
     camera = picamera.PiCamera()
     camera.resolution = (640, 480)
     rawCapture = picamera.array.PiRGBArray(camera, size=(640, 480))
     for frame in camera.capture_continuous(rawCapture, format="rgb", use_video_port=True):
-        if not killer.kill_now:
-            image_ori = frame.array
-            qrcode_detected, time_needed = analyse_image(image_ori)
-            if qrcode_detected:
-                # Pause the camera capture
-                last_detection_time = time.time()
-                time.sleep(time_needed)
-                print("Camera paused for"+ str(time_needed))
-            # image_ori, image = get_image(cap, killer)
-            cv2.imshow("Image", image_ori)
-            rawCapture.truncate(0)
-            key = cv2.waitKey(1) & 0xFF
-            if key == ord("q"):
-                break
+        image_ori = frame.array
+        qrcode_detected, time_needed = analyse_image(image_ori)
+        if qrcode_detected:
+            # Pause the camera capture
+            time.sleep(time_needed)
+            print("Camera paused for"+ str(time_needed))
+        # image_ori, image = get_image(cap, killer)
+        cv2.imshow("Image", image_ori)
+        rawCapture.truncate(0)
+        key = cv2.waitKey(1) & 0xFF
+        if key == ord("q"):
+            break
 
 
 def close_cam(cap):

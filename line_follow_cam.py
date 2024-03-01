@@ -1,12 +1,19 @@
+from picamera.array import PiRGBArray
+import picamera
 import cv2
 from simple_pid.pid import PID
 import numpy as np
-from time import sleep
-from time import time
+import time
 import signal
-
+from pyzbar.pyzbar import decode
 import Adafruit_PCA9685
 import RPi.GPIO as GPIO
+
+pwm = Adafruit_PCA9685.PCA9685()
+# Set frequency to 60hz, good for servos.
+pwm.set_pwm_freq(60)
+GPIO.setmode(GPIO.BCM)  # GPIO number  in BCM mode
+GPIO.setwarnings(False)
 
 pwm = Adafruit_PCA9685.PCA9685()
 # Set frequency to 60hz, good for servos.
@@ -141,14 +148,14 @@ def init_cam():
     return cap
 
 
-def get_image(cap, killer):
+def get_image(frame, killer):
     # read image from pi car camera
-    ret, frame = cap.read()
+
     if killer.kill_now:
         return np.zeros((480, 640))
-    frame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+    frame = cv2.cvtColor(frame, cv2.COLOR_RGB2GRAY)
     # save last frame
-    cv2.imwrite("Ducks/last_frame.png", frame)
+    cv2.imwrite("last_frame.png", frame)
     return frame
 
 
@@ -158,13 +165,13 @@ def close_cam(cap):
 
 def set_car_control(linear_v, angular_v):
     # map from speed to wheel motor input
-    a, b = 0.027384678763152703, -0.2914328262712497
+    a, b = 0.0008603150562323695, -0.2914328262712497
     diff = (angular_v - b) / a
     j, k = 0.06430834737443417, 78.99787271119764
     sum = (linear_v - k) / j
 
-    right_in = (diff + sum) / 2.
-    left_in = sum - right_in
+    left_in = (diff + sum) / 2.
+    right_in = sum - left_in
 
     # drive car with left and right control
     print(left_in, right_in)
@@ -172,41 +179,42 @@ def set_car_control(linear_v, angular_v):
 
     return
 
-
 def control_car(dry_run=False):
-    cap = init_cam()
     killer = GracefulKiller()
 
-    image = get_image(cap, killer)
-    image_middle = int(image.shape[1] / 2)
-    current_position = analyze_image(image, 0)
+    camera = picamera.PiCamera()
+    camera.resolution = (640, 480)
+    rawCapture = picamera.array.PiRGBArray(camera, size=(640, 480))
+    image_init = np.zeros((480, 640))
+    image_middle = int(image_init.shape[1] / 2)
     controller = PID(1, 0.1, 0.05, setpoint=image_middle, output_limits=(0, 6.28), starting_output=3.14,
                      sample_time=1. / 30.)
+    for frame in camera.capture_continuous(rawCapture, format="rgb", use_video_port=True):
 
-    while not killer.kill_now:
-        start_time = time()
+        if not killer.kill_now:
+            start_time = time()
+            angular_v = controller(current_position) - 3.14
+            # linear_v = 400 - abs(angular_v * 100 / 3.14)
+            linear_v = 300
+            if (current_position < (image.shape[1] / 5)) or (current_position > (image.shape[1] - image.shape[1] / 5)):
+                linear_v = 0
+                angular_v = angular_v * 2
 
-        angular_v = controller(current_position) - 3.14
-        # linear_v = 400 - abs(angular_v * 100 / 3.14)
-        linear_v = 300
-        if (current_position < (image.shape[1] / 5)) or (current_position > (image.shape[1] - image.shape[1] / 5)):
-            linear_v = 0
-            angular_v = angular_v * 3
+            if not dry_run:
+                set_car_control(linear_v, angular_v)
+            print(f"Set speed lin: {linear_v}, ang: {angular_v}")
 
-        if not dry_run:
-            set_car_control(linear_v, angular_v)
-        print(f"Set speed lin: {linear_v}, ang: {angular_v}")
+            image_ori = frame.array
+            image = get_image(image_ori, killer)
+            current_position = analyze_image(image, current_position)
+            print(f"current line position: {current_position}")
 
-        image = get_image(cap, killer)
-        current_position = analyze_image(image, current_position)
-        print(f"current line position: {current_position}")
+            elipsed_time = time() - start_time
 
-        elipsed_time = time() - start_time
+            print(f"===== processing time: {elipsed_time} s =====")
 
-        print(f"===== processing time: {elipsed_time} s =====")
-
-    set_speed(0, 0)
-    print("process terminated")
+        set_speed(0, 0)
+        print("process terminated")
 
 
 if __name__ == "__main__":
