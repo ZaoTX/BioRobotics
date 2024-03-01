@@ -108,7 +108,7 @@ def find_white_pix(line, middle_idx):
 
 
 def analyze_image(image, prev_value):
-    img_bottom = image[-300:, :]
+
     blur = cv2.GaussianBlur(img_bottom, (5, 5), 0)
     ret, binary_img = cv2.threshold(blur, 0, 255, cv2.THRESH_BINARY_INV + cv2.THRESH_OTSU)
 
@@ -121,16 +121,21 @@ def analyze_image(image, prev_value):
     current_value = 0
 
     if root_index is None:
+        print("baseline not detected")
         if middle_index is not None:
             current_value = middle_index
         else:
+            print("middle not detected as well")
             current_value = prev_value
     elif middle_index is None:
+        print("baseline detected but middle not detected")
         current_value = root_index
         current_value = image.shape[1] if binary_img[:, middle:].sum() > binary_img[:, :middle].sum() else 0
     elif abs(middle_index - middle) < abs(root_index - middle):
+        print("middle closer")
         current_value = middle_index
     else:
+        print("root closer")
         current_value = root_index
 
     return current_value
@@ -178,7 +183,7 @@ def control_car():
     angular_v = 0
 
     for frame in camera.capture_continuous(rawCapture, format="rgb", use_video_port=True):
-        start_time = time.time()
+        #start_time = time.time()
         angular_v = controller(current_position) - 3.14
         #angular_v = angular_v * 15  # remap to (-100, 100), left positive, right negative
         angular_v *=2
@@ -189,17 +194,18 @@ def control_car():
             angular_v = angular_v * 4
 
         set_car_control(linear_v, angular_v)
-        print(f"Set speed lin: {linear_v}, ang: {angular_v}")
+        #print(f"Set speed lin: {linear_v}, ang: {angular_v}")
 
         image_ori = frame.array
-        image = get_image(image_ori)
+        img_bottom = image_ori[-400:, :]
+        image = get_image(img_bottom)
         current_position = analyze_image(image, current_position)
-        image_dot = cv2.circle(image_ori, (current_position, 240), radius=1, color=(0, 0, 255), thickness=1)
-        print(f"current line position: {current_position}")
+        image_dot = cv2.circle(img_bottom, (current_position, 240), radius=1, color=(0, 0, 255), thickness=1)
+        #print(f"current line position: {current_position}")
 
-        elipsed_time = time.time() - start_time
+        #elipsed_time = time.time() - start_time
 
-        print(f"===== processing time: {elipsed_time} s =====")
+        #print(f"===== processing time: {elipsed_time} s =====")
 
         rawCapture.truncate(0)
         cv2.imshow("Image", image_dot)
