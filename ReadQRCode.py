@@ -83,7 +83,7 @@ def get_image(cap, killer):
         return np.zeros((480, 640))
     frame = cv2.cvtColor(frame_ori, cv2.COLOR_BGR2GRAY)
     # save last frame
-    cv2.imwrite("Ducks/last_frame.png", frame)
+    cv2.imwrite("last_frame.png", frame)
     return frame_ori,frame
 def set_car_control(linear_v, angular_v):
     # map from speed to wheel motor input
