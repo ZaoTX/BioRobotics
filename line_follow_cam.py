@@ -181,7 +181,7 @@ def control_car(dry_run=False):
         start_time = time.time()
         angular_v = controller(current_position) - 3.14
         # linear_v = 400 - abs(angular_v * 100 / 3.14)
-        linear_v = 500
+        linear_v = 300
         if (current_position < (image.shape[1] / 5)) or (current_position > (image.shape[1] - image.shape[1] / 5)):
             linear_v = 200
             angular_v = angular_v * 3
