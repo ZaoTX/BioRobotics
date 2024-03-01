@@ -176,7 +176,6 @@ def control_car(dry_run=False):
     current_position = image_middle
     linear_v = 500
     angular_v = 0
-    set_car_control(linear_v, angular_v)
 
     for frame in camera.capture_continuous(rawCapture, format="rgb", use_video_port=True):
         start_time = time.time()
