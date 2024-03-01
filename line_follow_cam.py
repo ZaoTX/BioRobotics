@@ -167,7 +167,7 @@ def control_car(dry_run=False):
     camera.resolution = (640, 480)
     rawCapture = picamera.array.PiRGBArray(camera, size=(640, 480))
     rawCapture.truncate(0)
-    image = cv2.imread("last_frame.png")
+    image = camera.capture(image, 'rgb')
     image_middle = int(image.shape[1] / 2)
     controller = PID(1, 0.1, 0.05, setpoint=image_middle, output_limits=(0, 6.28), starting_output=3.14,
                      sample_time=1. / 30.)
@@ -181,7 +181,7 @@ def control_car(dry_run=False):
             linear_v = 300
             if (current_position < (image.shape[1] / 5)) or (current_position > (image.shape[1] - image.shape[1] / 5)):
                 linear_v = 0
-                angular_v = angular_v * 5
+                angular_v = angular_v * 30
 
             if not dry_run:
                 set_car_control(linear_v, angular_v)
