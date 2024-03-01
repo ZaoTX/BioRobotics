@@ -109,7 +109,7 @@ def find_white_pix(line, middle_idx):
 
 def analyze_image(image, prev_value):
 
-    blur = cv2.GaussianBlur(img_bottom, (5, 5), 0)
+    blur = cv2.GaussianBlur(image, (5, 5), 0)
     ret, binary_img = cv2.threshold(blur, 0, 255, cv2.THRESH_BINARY_INV + cv2.THRESH_OTSU)
 
     base_line = binary_img[-1]
