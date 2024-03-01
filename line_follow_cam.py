@@ -175,34 +175,36 @@ def control_car(dry_run=False):
     current_position = image_middle
     linear_v = 500
     angular_v = 0
+    set_car_control(linear_v, angular_v)
+
     for frame in camera.capture_continuous(rawCapture, format="rgb", use_video_port=True):
-            start_time = time.time()
-            angular_v = controller(current_position) - 3.14
-            # linear_v = 400 - abs(angular_v * 100 / 3.14)
-            linear_v = 500
-            if (current_position < (image.shape[1] / 5)) or (current_position > (image.shape[1] - image.shape[1] / 5)):
-                linear_v = 0
-                angular_v = angular_v * 30
+        start_time = time.time()
+        angular_v = controller(current_position) - 3.14
+        # linear_v = 400 - abs(angular_v * 100 / 3.14)
+        linear_v = 500
+        if (current_position < (image.shape[1] / 5)) or (current_position > (image.shape[1] - image.shape[1] / 5)):
+            linear_v = 0
+            angular_v = angular_v * 30
 
-            if not dry_run:
-                set_car_control(linear_v, angular_v)
-            print(f"Set speed lin: {linear_v}, ang: {angular_v}")
+        if not dry_run:
+            set_car_control(linear_v, angular_v)
+        print(f"Set speed lin: {linear_v}, ang: {angular_v}")
 
-            image_ori = frame.array
-            image = get_image(image_ori)
-            current_position = analyze_image(image, current_position)
-            print(f"current line position: {current_position}")
+        image_ori = frame.array
+        image = get_image(image_ori)
+        current_position = analyze_image(image, current_position)
+        print(f"current line position: {current_position}")
 
-            elipsed_time = time.time() - start_time
+        elipsed_time = time.time() - start_time
 
-            print(f"===== processing time: {elipsed_time} s =====")
+        print(f"===== processing time: {elipsed_time} s =====")
 
-            set_speed(0, 0)
-            print("process terminated")
-            rawCapture.truncate(0)
-            key = cv2.waitKey(1) & 0xFF
-            if key == ord("q"):
-                break
+        set_speed(0, 0)
+        print("process terminated")
+        rawCapture.truncate(0)
+        key = cv2.waitKey(1) & 0xFF
+        if key == ord("q"):
+            break
 
 
 if __name__ == "__main__":
