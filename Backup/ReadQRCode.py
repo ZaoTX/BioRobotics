@@ -1,5 +1,5 @@
-import duck_detector
 import math
+
 from picamera.array import PiRGBArray
 import picamera
 import cv2
@@ -83,11 +83,11 @@ def get_image(cap, killer):
         return np.zeros((480, 640))
     frame = cv2.cvtColor(frame_ori, cv2.COLOR_BGR2GRAY)
     # save last frame
-    cv2.imwrite("Ducks/last_frame.png", frame_ori)
+    cv2.imwrite("last_frame.png", frame)
     return frame_ori,frame
 def set_car_control(linear_v, angular_v):
     # map from speed to wheel motor input
-    a, b = 0.0008603150562323695, -0.2914328262712497
+    a, b = 0.027384678763152703, -0.2914328262712497
     diff = (angular_v - b) / a
     j, k = 0.06430834737443417, 78.99787271119764
     sum = (linear_v - k) / j
@@ -100,49 +100,88 @@ def set_car_control(linear_v, angular_v):
     set_speed(left_in, right_in)
 
     return
-def detect_yellow_area(image):
-    # Convert BGR image to HSV
-    hsv = cv2.cvtColor(image, cv2.COLOR_RGB2HSV)
+def init_cam():
+    cap = cv2.VideoCapture(0)
 
-    # Define range of yellow color in HSV
-    lower_yellow = np.array([15, 100, 100])
-    upper_yellow = np.array([30, 255, 255])
+    if not (cap.isOpened()):
+        raise Exception("Camera is not available")
 
-    # Threshold the HSV image to get only yellow colors
-    mask = cv2.inRange(hsv, lower_yellow, upper_yellow)
+    cap.set(cv2.CAP_PROP_FRAME_WIDTH, 640)
+    cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 480)
 
-    # Bitwise-AND mask and original image
-    res = cv2.bitwise_and(image, image, mask=mask)
+    return cap
+def Turn720Deg(linv_ori,angv_ori):
+    #Turn the car for 720
+    ang_v = 6 # in radians
 
-    # Check if there's yellow in the image
-    params = cv2.SimpleBlobDetector_Params()
-    params.minArea = 4*5 # Not a single pixel I guess...
-    params.filterByInertia = False
-    params.filterByConvexity = False  # Duck is not very convex...
-    detector = cv2.SimpleBlobDetector.create(params)
-    keypoints = detector.detect(res)
-    # Print the result
-    if len(keypoints) > 0:
-        print("Yellow detected in the image!")
+    #turning speed
+    speed_actual = ang_v*180/math.pi
+    time_needed = (720 / speed_actual)*1.1
+    ang_v = ang_v * 30 # map the speed to degree
+    set_car_control(linear_v=0, angular_v=ang_v)
+    time.sleep(time_needed)
+    set_car_control(linear_v=linv_ori, angular_v=angv_ori)
+    return time_needed
+def TurnAround(linv_ori, angv_ori):
+    # Turn the car for 720
+    ang_v = 6  # in radians
 
+    # turning speed
+    speed_actual = ang_v * 180 / math.pi
+    time_needed = (180 / speed_actual)
+    ang_v = ang_v * 30 # map the speed to degree
+    set_car_control(linear_v=0, angular_v=ang_v)
+    time.sleep(time_needed)
+    set_car_control(linear_v=linv_ori, angular_v=angv_ori)
+    return time_needed
+def Stop10s(linv_ori, angv_ori):
+    set_car_control(linear_v=0, angular_v=0)
+    time.sleep(10)
+    set_car_control(linear_v=linv_ori, angular_v=angv_ori)
+
+    return 10
+def analyse_image(image,linv_ori,angv_ori): # takes RGB as input
+    GRAY_image = cv2.cvtColor(image, cv2.COLOR_RGB2GRAY)
+    barcodes = decode(GRAY_image)
+    if len(barcodes) > 0:
+        print("Decoded Data : {}".format(barcodes))
+        if("car_rotate_720" in str(barcodes[0].data) ):
+            time_needed = Turn720Deg(linv_ori,angv_ori)
+            return True,time_needed
+        elif("car_turn_around" in str(barcodes[0].data)):
+            time_needed = TurnAround(linv_ori,angv_ori)
+            return True,time_needed
+        elif ("car_stop_10s" in str(barcodes[0].data)):
+            time_needed = Stop10s(linv_ori, angv_ori)
+            return True,time_needed
     else:
-        print("No yellow detected in the image.")
+        print("QR Code not detected")
+        return False, 0
 def control_car(dry_run=False):
-    killer = GracefulKiller()
     camera = picamera.PiCamera()
     camera.resolution = (640, 480)
     rawCapture = picamera.array.PiRGBArray(camera, size=(640, 480))
+    cur_linv = 0
+    cur_angv = 0
+    set_car_control(linear_v=cur_linv, angular_v=cur_angv)
     for frame in camera.capture_continuous(rawCapture, format="rgb", use_video_port=True):
-        if not killer.kill_now:
-            image_ori = frame.array # rgb image
-            image_bgr =cv2.cvtColor(image_ori, cv2.COLOR_RGB2BGR)
-            cv2.imshow("Image", image_bgr)
-            detect_yellow_area(image_ori)
-            rawCapture.truncate(0)
-            key = cv2.waitKey(1) & 0xFF
-            if key == ord("q"):
-                break
+        image_ori = frame.array
+        qrcode_detected, time_needed = analyse_image(image_ori,cur_linv,cur_angv)
+        if qrcode_detected:
+            # Pause the camera capture
+            time.sleep(time_needed)
+            print("Camera paused for"+ str(time_needed))
+        # image_ori, image = get_image(cap, killer)
+        cv2.imshow("Image", image_ori)
+        rawCapture.truncate(0)
+        key = cv2.waitKey(1) & 0xFF
+        if key == ord("q"):
+            set_speed(0, 0)
+            break
 
+
+def close_cam(cap):
+    cap.release()
 
 
 if __name__ == "__main__":
