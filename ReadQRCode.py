@@ -116,7 +116,7 @@ def Turn720Deg(linv_ori,angv_ori):
 
     #turning speed
     speed_actual = ang_v*180/math.pi
-    time_needed = (720 / speed_actual)
+    time_needed = (720 / speed_actual)*1.1
     ang_v = ang_v * 30 # map the speed to degree
     set_car_control(linear_v=0, angular_v=ang_v)
     time.sleep(time_needed)
