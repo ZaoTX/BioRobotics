@@ -87,7 +87,7 @@ def get_image(cap, killer):
     return frame_ori,frame
 def set_car_control(linear_v, angular_v):
     # map from speed to wheel motor input
-    a, b = 0.0008603150562323695, -0.2914328262712497
+    a, b = 0.027384678763152703, -0.2914328262712497
     diff = (angular_v - b) / a
     j, k = 0.06430834737443417, 78.99787271119764
     sum = (linear_v - k) / j
