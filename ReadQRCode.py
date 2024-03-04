@@ -161,7 +161,7 @@ def control_car(dry_run=False):
     camera = picamera.PiCamera()
     camera.resolution = (640, 480)
     rawCapture = picamera.array.PiRGBArray(camera, size=(640, 480))
-    cur_linv = 500
+    cur_linv = 300
     cur_angv = 0
     set_car_control(linear_v=cur_linv, angular_v=cur_angv)
     for frame in camera.capture_continuous(rawCapture, format="rgb", use_video_port=True):
