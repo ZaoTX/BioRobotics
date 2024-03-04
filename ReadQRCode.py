@@ -140,19 +140,19 @@ def Stop10s(linv_ori, angv_ori):
     set_car_control(linear_v=linv_ori, angular_v=angv_ori)
 
     return 10
-def analyse_image(image): # takes RGB as input
+def analyse_image(image,linv_ori,angv_ori): # takes RGB as input
     GRAY_image = cv2.cvtColor(image, cv2.COLOR_RGB2GRAY)
     barcodes = decode(GRAY_image)
     if len(barcodes) > 0:
         print("Decoded Data : {}".format(barcodes))
         if("car_rotate_720" in str(barcodes[0].data) ):
-            time_needed = Turn720Deg(0,0)
+            time_needed = Turn720Deg(linv_ori,angv_ori)
             return True,time_needed
         elif("car_turn_around" in str(barcodes[0].data)):
-            time_needed = TurnAround(0,0)
+            time_needed = TurnAround(linv_ori,angv_ori)
             return True,time_needed
         elif ("car_stop_10s" in str(barcodes[0].data)):
-            time_needed = Stop10s(0, 0)
+            time_needed = Stop10s(linv_ori, angv_ori)
             return True,time_needed
     else:
         print("QR Code not detected")
@@ -161,9 +161,12 @@ def control_car(dry_run=False):
     camera = picamera.PiCamera()
     camera.resolution = (640, 480)
     rawCapture = picamera.array.PiRGBArray(camera, size=(640, 480))
+    cur_linv = 200
+    cur_angv = 0
+    set_car_control(linear_v=cur_linv, angular_v=cur_angv)
     for frame in camera.capture_continuous(rawCapture, format="rgb", use_video_port=True):
         image_ori = frame.array
-        qrcode_detected, time_needed = analyse_image(image_ori)
+        qrcode_detected, time_needed = analyse_image(image_ori,cur_linv,cur_angv)
         if qrcode_detected:
             # Pause the camera capture
             time.sleep(time_needed)
@@ -173,6 +176,7 @@ def control_car(dry_run=False):
         rawCapture.truncate(0)
         key = cv2.waitKey(1) & 0xFF
         if key == ord("q"):
+            set_speed(0, 0)
             break
 
 
