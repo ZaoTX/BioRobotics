@@ -99,24 +99,21 @@ def find_white_pix(line, middle_idx):
 
     return pos, index
 ################################ Actions ################################
+########### right
 def Turn720Deg(linv_ori,angv_ori):
     #Turn the car for 720
-    ang_v = 6 # in radians
-
-    #turning speed
-    ang_v = ang_v*180/np.pi
-    time_needed = 720 / ang_v
+    ang_v = 180
+    # turning speed
+    time_needed = (720 / ang_v) * 0.55
     set_car_control(linear_v=0, angular_v=ang_v)
     time.sleep(time_needed)
     set_car_control(linear_v=linv_ori, angular_v=angv_ori)
     return time_needed
 def TurnAround(linv_ori, angv_ori):
     # Turn the car for 720
-    ang_v = 6  # in radians
+    ang_v = 180
     # turning speed
-    #speed_actual = ang_v * 180 / np.pi
-    ang_v = ang_v * 180 / np.pi # map the speed to degree
-    time_needed = (180 / ang_v)
+    time_needed = (180 / ang_v) * 0.6
     set_car_control(linear_v=0, angular_v=ang_v)
     time.sleep(time_needed)
     set_car_control(linear_v=linv_ori, angular_v=angv_ori)
@@ -127,14 +124,15 @@ def Stop10s(linv_ori, angv_ori):
     set_car_control(linear_v=linv_ori, angular_v=angv_ori)
 
     return 10
+def go_straight_n_seconds(linv_ori, angv_ori,n):
+    set_car_control(linear_v=300, angular_v= 0)
+    time.sleep(n)
+    set_car_control(linv_ori, angv_ori)
 def turn_for_n_degrees(linv_ori, angv_ori,n):
     # n <0 left n>0 right
-    ang_v = 6  # in radians
-    if n < 0:
-        ang_v = -ang_v
+    ang_v = 180
     # turning speed
-    speed_actual = ang_v * 180 / np.pi
-    time_needed = np.abs(180 / speed_actual)
+    time_needed = (n / ang_v) * 0.6
     ang_v = ang_v * 30  # map the speed to degree
     set_car_control(linear_v=0, angular_v=ang_v)
     time.sleep(time_needed)
@@ -142,19 +140,19 @@ def turn_for_n_degrees(linv_ori, angv_ori,n):
 
 def avoid_duck(linv_ori, angv_ori):
     # turn right 90 degrees
-
+    turn_for_n_degrees(0,0,90)
     # go for 1 second
-
+    go_straight_n_seconds(0,0,1)
     # turn left 90 degrees
-
+    turn_for_n_degrees(0, 0, -90)
     # go for 1 second
-
+    go_straight_n_seconds(0, 0, 1)
     # turn left 90 degrees
-
+    turn_for_n_degrees(0, 0, -90)
     # go for 1 second
-
+    go_straight_n_seconds(0, 0, 1)
     # turn right 90 degrees
-    pass
+    turn_for_n_degrees(linv_ori, angv_ori, 90)
 def analyze_image(image, prev_value):
     img_bottom = image[-200:, :]
     blur = cv2.GaussianBlur(img_bottom, (5, 5), 0)

@@ -100,6 +100,35 @@ def set_car_control(linear_v, angular_v):
     set_speed(left_in, right_in)
 
     return
+def go_straight_n_seconds(linv_ori, angv_ori,n):
+    set_car_control(linear_v=300, angular_v= 0)
+    time.sleep(n)
+    set_car_control(linv_ori, angv_ori)
+def turn_for_n_degrees(linv_ori, angv_ori,n):
+    # n <0 left n>0 right
+    ang_v = 180
+    # turning speed
+    time_needed = (n / ang_v) * 0.6
+    ang_v = ang_v * 30  # map the speed to degree
+    set_car_control(linear_v=0, angular_v=ang_v)
+    time.sleep(time_needed)
+    set_car_control(linear_v=linv_ori, angular_v=angv_ori)
+
+def avoid_duck(linv_ori, angv_ori):
+    # turn right 90 degrees
+    turn_for_n_degrees(0,0,90)
+    # go for 1 second
+    go_straight_n_seconds(0,0,1)
+    # turn left 90 degrees
+    turn_for_n_degrees(0, 0, -90)
+    # go for 1 second
+    go_straight_n_seconds(0, 0, 1)
+    # turn left 90 degrees
+    turn_for_n_degrees(0, 0, -90)
+    # go for 1 second
+    go_straight_n_seconds(0, 0, 1)
+    # turn right 90 degrees
+    turn_for_n_degrees(linv_ori, angv_ori, 90)
 def detect_yellow_area(image):
     # Convert BGR image to HSV
     hsv = cv2.cvtColor(image, cv2.COLOR_RGB2HSV)
@@ -124,6 +153,7 @@ def detect_yellow_area(image):
     # Print the result
     if len(keypoints) > 0:
         print("Yellow detected in the image!")
+        avoid_duck (0,0)
 
     else:
         print("No yellow detected in the image.")
