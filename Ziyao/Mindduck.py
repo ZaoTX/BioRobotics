@@ -130,6 +130,7 @@ def turn_left_90_degrees(linv_ori, angv_ori):
     time.sleep(time_needed)
     set_car_control(linear_v=linv_ori, angular_v=angv_ori)
     return time_needed
+
 def avoid_duck(linv_ori, angv_ori):
     # turn right 90 degrees
     time_needed = turn_right_90_degrees(0,0)
@@ -150,7 +151,7 @@ def avoid_duck(linv_ori, angv_ori):
     go_straight_n_seconds(0,0,1)
     time.sleep(1)
     # # turn right 90 degrees
-    turn_right_90_degrees(linv_ori, angv_ori)
+    turn_right_60_degrees(linv_ori, angv_ori)
 def detect_yellow_area(image):
     # Convert BGR image to HSV
     hsv = cv2.cvtColor(image, cv2.COLOR_RGB2HSV)
