@@ -105,7 +105,7 @@ def go_straight_n_seconds(linv_ori, angv_ori,n):
     set_car_control(linv_ori, angv_ori)
 def turn_for_n_degrees(linv_ori, angv_ori,n):
     # n <0 left n>0 right
-    ang_v = 180
+    ang_v = 90
     # turning speed
     time_needed = (n / ang_v)
     set_car_control(linear_v=0, angular_v=ang_v)
@@ -174,6 +174,7 @@ def control_car(dry_run=False):
             rawCapture.truncate(0)
             key = cv2.waitKey(1) & 0xFF
             if key == ord("q"):
+                set_speed(0,0)
                 break
 
 
