@@ -125,7 +125,7 @@ def TurnAround(linv_ori, angv_ori):
     # Turn the car for 720
     ang_v = 180
     # turning speed
-    time_needed = (180 / ang_v) * 0.5
+    time_needed = (180 / ang_v) * 0.6
     set_car_control(linear_v=0, angular_v=ang_v)
     time.sleep(time_needed)
     set_car_control(linear_v=linv_ori, angular_v=angv_ori)
