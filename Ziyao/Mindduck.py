@@ -107,8 +107,7 @@ def turn_for_n_degrees(linv_ori, angv_ori,n):
     # n <0 left n>0 right
     ang_v = 180
     # turning speed
-    time_needed = (n / ang_v) * 0.6
-    ang_v = ang_v * 30  # map the speed to degree
+    time_needed = (n / ang_v)
     set_car_control(linear_v=0, angular_v=ang_v)
     time.sleep(time_needed)
     set_car_control(linear_v=linv_ori, angular_v=angv_ori)
@@ -169,6 +168,7 @@ def control_car(dry_run=False):
             duck_detected = detect_yellow_area(image_ori)
             if duck_detected:
                 # Pause the camera capture
+                avoid_duck(0,0)
                 time.sleep(5)
                 print("Camera paused for" + str(5))
             rawCapture.truncate(0)
