@@ -144,8 +144,8 @@ def avoid_duck(linv_ori, angv_ori):
     go_straight_n_seconds(0, 0, 1.1)
     time.sleep(1.1)
     # # # turn left 90 degrees
-    # time_needed = turn_left_90_degrees(0, 0)
-    # time.sleep(time_needed)
+    time_needed = turn_left_90_degrees(0, 0)
+    time.sleep(time_needed)
     # time.sleep(time_needed)
     # # # go for 1 second
     # go_straight_n_seconds(0,0,1)
