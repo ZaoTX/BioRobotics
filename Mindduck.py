@@ -1,4 +1,3 @@
-import duck_detector
 import math
 from picamera.array import PiRGBArray
 import picamera
