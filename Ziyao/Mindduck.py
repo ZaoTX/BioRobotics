@@ -116,7 +116,7 @@ def turn_left_90_degrees(linv_ori, angv_ori):
     # n <0 left n>0 right
     ang_v = -90
     # turning speed
-    time_needed = (90 / ang_v)/3.14
+    time_needed = (-90 / ang_v)/3.14
     set_car_control(linear_v=0, angular_v=ang_v)
     time.sleep(time_needed)
     set_car_control(linear_v=linv_ori, angular_v=angv_ori)
