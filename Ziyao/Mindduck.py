@@ -100,7 +100,7 @@ def set_car_control(linear_v, angular_v):
 
     return
 def go_straight_n_seconds(linv_ori, angv_ori,n):
-    set_car_control(linear_v=300, angular_v= -60)
+    set_car_control(linear_v=300, angular_v= -30)
     time.sleep(n)
     set_car_control(linv_ori, angv_ori)
 def turn_right_90_degrees(linv_ori, angv_ori):
