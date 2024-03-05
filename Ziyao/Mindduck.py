@@ -152,10 +152,10 @@ def detect_yellow_area(image):
     # Print the result
     if len(keypoints) > 0:
         print("Yellow detected in the image!")
-        avoid_duck (0,0)
-
+        return True
     else:
         print("No yellow detected in the image.")
+    return False
 def control_car(dry_run=False):
     killer = GracefulKiller()
     camera = picamera.PiCamera()
@@ -166,7 +166,11 @@ def control_car(dry_run=False):
             image_ori = frame.array # rgb image
             image_bgr =cv2.cvtColor(image_ori, cv2.COLOR_RGB2BGR)
             cv2.imshow("Image", image_bgr)
-            detect_yellow_area(image_ori)
+            duck_detected = detect_yellow_area(image_ori)
+            if duck_detected:
+                # Pause the camera capture
+                time.sleep(5)
+                print("Camera paused for" + str(5))
             rawCapture.truncate(0)
             key = cv2.waitKey(1) & 0xFF
             if key == ord("q"):
