@@ -179,7 +179,7 @@ def avoid_duck(linv_ori, angv_ori):
     turn_right_60_degrees(linv_ori, angv_ori)
 def detect_yellow_area(image):
     # Convert RGB image to HSV
-    hsv = cv2.cvtColor(image, cv2.COLOR_RGB2HSV)
+    hsv = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
 
     # Define range of yellow color in HSV
     lower_yellow = np.array([15, 100, 100])
@@ -248,14 +248,14 @@ def init_cam():
 
 def get_image(cap, killer):
     # read image from pi car camera
-    ret, frame = cap.read()
+    ret, frame_ori = cap.read()
     if killer.kill_now:
         return np.zeros((480, 640))
-    frame = frame.astype("uint8")
+    frame = frame_ori.astype("uint8")
     frame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
     # save last frame
     cv2.imwrite("Ducks/last_frame.png", frame)
-    return frame
+    return frame, frame_ori
 
 
 def close_cam(cap):
@@ -282,8 +282,7 @@ def set_car_control(linear_v, angular_v):
     return
 
 def detect_qrcode(image,linv_ori,angv_ori): # takes RGB as input
-    GRAY_image = cv2.cvtColor(image, cv2.COLOR_RGB2GRAY)
-    barcodes = decode(GRAY_image)
+    barcodes = decode(image)
     if len(barcodes) > 0:
         print("Decoded Data : {}".format(barcodes))
         if("car_rotate_720" in str(barcodes[0].data) ):
@@ -298,24 +297,51 @@ def detect_qrcode(image,linv_ori,angv_ori): # takes RGB as input
     else:
         print("QR Code not detected")
         return False, 0
+def detect_yellow_area(image):
+    # Convert BGR image to HSV
+    hsv = cv2.cvtColor(image, cv2.COLOR_RGB2HSV)
+
+    # Define range of yellow color in HSV
+    lower_yellow = np.array([15, 100, 100])
+    upper_yellow = np.array([30, 255, 255])
+
+    # Threshold the HSV image to get only yellow colors
+    mask = cv2.inRange(hsv, lower_yellow, upper_yellow)
+
+    # Bitwise-AND mask and original image
+    res = cv2.bitwise_and(image, image, mask=mask)
+
+    # Check if there's yellow in the image
+    params = cv2.SimpleBlobDetector_Params()
+    params.minArea = 4*5 # Not a single pixel I guess...
+    params.filterByInertia = False
+    params.filterByConvexity = False  # Duck is not very convex...
+    detector = cv2.SimpleBlobDetector.create(params)
+    keypoints = detector.detect(res)
+    # Print the result
+    if len(keypoints) > 0:
+        print("Yellow detected in the image!")
+        return True
+    else:
+        print("No yellow detected in the image.")
+    return False
 def control_car(dry_run=False):
     cap = init_cam()
     killer = GracefulKiller()
 
-    image = get_image(cap, killer)
-    image_middle = int(image.shape[1] / 2)
-    current_position = analyze_image(image, 0)
+    image_gray, image_ori = get_image(cap, killer)
+    image_middle = int(image_gray.shape[1] / 2)
+    current_position = analyze_image(image_gray, 0)
     controller = PID(1, 0.1, 0.05, setpoint=image_middle, output_limits=(0, 6.28), starting_output=3.14,
                      sample_time=1. / 30.)
 
     while not killer.kill_now:
         start_time = time()
-
         angular_v = controller(current_position) - 3.14
         #current setup works
         linear_v = 500
         angular_v *=30
-        if (current_position < (image.shape[1] / 5)) or (current_position > (image.shape[1] - image.shape[1] / 5)):
+        if (current_position < (image_gray.shape[1] / 5)) or (current_position > (image_gray.shape[1] - image_gray.shape[1] / 5)):
             linear_v = 0
             angular_v = angular_v * 5
 
@@ -323,14 +349,20 @@ def control_car(dry_run=False):
             set_car_control(linear_v, angular_v)
         print(f"Set speed lin: {linear_v}, ang: {angular_v}")
 
-        image = get_image(cap, killer)
-        qrcode_detected, time_needed = detect_qrcode(image, linear_v, angular_v)
+        image_gray,image_ori = get_image(cap, killer)
+        qrcode_detected, time_needed = detect_qrcode(image_gray, linear_v, angular_v)
+        duck_detected = detect_yellow_area(image_ori)
         if qrcode_detected:
             time.sleep(time_needed)
             print("Camera paused for" + str(time_needed))
-        current_position = analyze_image(image, current_position)
-        print(f"current line position: {current_position}")
 
+        elif duck_detected:
+            # Pause the camera capture
+            avoid_duck(linear_v, angular_v)
+            time.sleep(5)
+            print("Camera paused for" + str(5))
+        current_position = analyze_image(image_gray, current_position)
+        print(f"current line position: {current_position}")
         elipsed_time = time() - start_time
 
         print(f"===== processing time: {elipsed_time} s =====")
