@@ -109,7 +109,7 @@ def turn_for_n_degrees(linv_ori, angv_ori,n):
     if(n<0):
         ang_v = -90
     # turning speed
-    time_needed = (np.abs(n) / ang_v)/3.14
+    time_needed = (n / ang_v)/3.14
     set_car_control(linear_v=0, angular_v=ang_v)
     time.sleep(time_needed)
     set_car_control(linear_v=linv_ori, angular_v=angv_ori)
