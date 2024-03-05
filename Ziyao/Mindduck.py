@@ -112,6 +112,15 @@ def turn_right_90_degrees(linv_ori, angv_ori):
     time.sleep(time_needed)
     set_car_control(linear_v=linv_ori, angular_v=angv_ori)
     return time_needed
+def turn_right_60_degrees(linv_ori, angv_ori):
+    # n <0 left n>0 right
+    ang_v = 90
+    # turning speed
+    time_needed = (60 / ang_v)/3.14
+    set_car_control(linear_v=0, angular_v=ang_v)
+    time.sleep(time_needed)
+    set_car_control(linear_v=linv_ori, angular_v=angv_ori)
+    return time_needed
 def turn_left_90_degrees(linv_ori, angv_ori):
     # n <0 left n>0 right
     ang_v = -90
@@ -123,14 +132,14 @@ def turn_left_90_degrees(linv_ori, angv_ori):
     return time_needed
 def avoid_duck(linv_ori, angv_ori):
     # turn right 90 degrees
-    time_needed = turn_right_90_degrees(0,0)
-    time.sleep(time_needed)
+    # time_needed = turn_right_90_degrees(0,0)
+    # time.sleep(time_needed)
     # # go for 1 second
     go_straight_n_seconds(0,0,0.8)
     time.sleep(0.8)
     # # # turn left 90 degrees
-    time_needed = turn_left_90_degrees(0,0)
-    time.sleep(time_needed)
+    # time_needed = turn_left_90_degrees(0,0)
+    # time.sleep(time_needed)
     # # # go for 1 second
     # go_straight_n_seconds(0,0,1)
     # time.sleep(1)
