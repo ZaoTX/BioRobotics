@@ -123,21 +123,13 @@ def Turn720Deg(linv_ori,angv_ori):
     return time_needed
 def TurnAround(linv_ori, angv_ori):
     # Turn the car for 720
-    ang_v = 6  # in radians
+    ang_v = 180
     # turning speed
-    #speed_actual = ang_v * 180 / np.pi
-    ang_v = ang_v * 180 / np.pi # map the speed to degree
     time_needed = (180 / ang_v)
     set_car_control(linear_v=0, angular_v=ang_v)
     time.sleep(time_needed)
     set_car_control(linear_v=linv_ori, angular_v=angv_ori)
     return time_needed
-def Stop10s(linv_ori, angv_ori):
-    set_car_control(linear_v=0, angular_v=0)
-    time.sleep(10)
-    set_car_control(linear_v=linv_ori, angular_v=angv_ori)
-
-    return 10
 def Stop10s(linv_ori, angv_ori):
     set_car_control(linear_v=0, angular_v=0)
     time.sleep(10)
