@@ -2,7 +2,7 @@ import cv2
 from simple_pid.pid import PID
 import numpy as np
 from time import sleep
-from time import time
+import time
 import signal
 
 import Adafruit_PCA9685
@@ -98,8 +98,63 @@ def find_white_pix(line, middle_idx):
                 pass
 
     return pos, index
+################################ Actions ################################
+def Turn720Deg(linv_ori,angv_ori):
+    #Turn the car for 720
+    ang_v = 6 # in radians
 
+    #turning speed
+    ang_v = ang_v*180/np.pi
+    time_needed = 720 / ang_v
+    set_car_control(linear_v=0, angular_v=ang_v)
+    time.sleep(time_needed)
+    set_car_control(linear_v=linv_ori, angular_v=angv_ori)
+    return time_needed
+def TurnAround(linv_ori, angv_ori):
+    # Turn the car for 720
+    ang_v = 6  # in radians
+    # turning speed
+    #speed_actual = ang_v * 180 / np.pi
+    ang_v = ang_v * 180 / np.pi # map the speed to degree
+    time_needed = (180 / ang_v)
+    set_car_control(linear_v=0, angular_v=ang_v)
+    time.sleep(time_needed)
+    set_car_control(linear_v=linv_ori, angular_v=angv_ori)
+    return time_needed
+def Stop10s(linv_ori, angv_ori):
+    set_car_control(linear_v=0, angular_v=0)
+    time.sleep(10)
+    set_car_control(linear_v=linv_ori, angular_v=angv_ori)
 
+    return 10
+def turn_for_n_degrees(linv_ori, angv_ori,n):
+    # n <0 left n>0 right
+    ang_v = 6  # in radians
+    if n < 0:
+        ang_v = -ang_v
+    # turning speed
+    speed_actual = ang_v * 180 / np.pi
+    time_needed = np.abs(180 / speed_actual)
+    ang_v = ang_v * 30  # map the speed to degree
+    set_car_control(linear_v=0, angular_v=ang_v)
+    time.sleep(time_needed)
+    set_car_control(linear_v=linv_ori, angular_v=angv_ori)
+
+def avoid_duck(linv_ori, angv_ori):
+    # turn right 90 degrees
+
+    # go for 1 second
+
+    # turn left 90 degrees
+
+    # go for 1 second
+
+    # turn left 90 degrees
+
+    # go for 1 second
+
+    # turn right 90 degrees
+    pass
 def analyze_image(image, prev_value):
     img_bottom = image[-200:, :]
     blur = cv2.GaussianBlur(img_bottom, (5, 5), 0)
