@@ -151,6 +151,23 @@ def analyse_image(image,linv_ori,angv_ori): # takes RGB as input
     else:
         print("QR Code not detected")
         return False, 0
+def detect_qrcode(image,linv_ori,angv_ori): # takes RGB as input
+    GRAY_image = cv2.cvtColor(image, cv2.COLOR_RGB2GRAY)
+    barcodes = decode(GRAY_image)
+    if len(barcodes) > 0:
+        print("Decoded Data : {}".format(barcodes))
+        if("car_rotate_720" in str(barcodes[0].data) ):
+            time_needed = Turn720Deg(linv_ori,angv_ori)
+            return True,time_needed
+        elif("car_turn_around" in str(barcodes[0].data)):
+            time_needed = TurnAround(linv_ori,angv_ori)
+            return True,time_needed
+        elif ("car_stop_10s" in str(barcodes[0].data)):
+            time_needed = Stop10s(linv_ori, angv_ori)
+            return True,time_needed
+    else:
+        print("QR Code not detected")
+        return False, 0
 def control_car(dry_run=False):
     camera = picamera.PiCamera()
     camera.resolution = (640, 480)

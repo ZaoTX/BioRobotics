@@ -4,7 +4,7 @@ import numpy as np
 from time import sleep
 import time
 import signal
-
+from pyzbar.pyzbar import decode
 import Adafruit_PCA9685
 import RPi.GPIO as GPIO
 
@@ -125,34 +125,86 @@ def Stop10s(linv_ori, angv_ori):
 
     return 10
 def go_straight_n_seconds(linv_ori, angv_ori,n):
-    set_car_control(linear_v=300, angular_v= 0)
+    set_car_control(linear_v=376, angular_v= 0)
     time.sleep(n)
     set_car_control(linv_ori, angv_ori)
-def turn_for_n_degrees(linv_ori, angv_ori,n):
+def turn_right_90_degrees(linv_ori, angv_ori):
     # n <0 left n>0 right
-    ang_v = 180
+    ang_v = 90
     # turning speed
-    time_needed = (n / ang_v) * 0.6
-    ang_v = ang_v * 30  # map the speed to degree
+    time_needed = (90 / ang_v)/3.14
     set_car_control(linear_v=0, angular_v=ang_v)
     time.sleep(time_needed)
     set_car_control(linear_v=linv_ori, angular_v=angv_ori)
+    return time_needed
+def turn_right_60_degrees(linv_ori, angv_ori):
+    # n <0 left n>0 right
+    ang_v = 90
+    # turning speed
+    time_needed = (60 / ang_v)/3.14
+    set_car_control(linear_v=0, angular_v=ang_v)
+    time.sleep(time_needed)
+    set_car_control(linear_v=linv_ori, angular_v=angv_ori)
+    return time_needed
+def turn_left_90_degrees(linv_ori, angv_ori):
+    # n <0 left n>0 right
+    ang_v = -90
+    # turning speed
+    time_needed = (-110 / ang_v)/3.14
+    set_car_control(linear_v=0, angular_v=ang_v)
+    time.sleep(time_needed)
+    set_car_control(linear_v=linv_ori, angular_v=angv_ori)
+    return time_needed
 
 def avoid_duck(linv_ori, angv_ori):
     # turn right 90 degrees
-    turn_for_n_degrees(0,0,90)
-    # go for 1 second
+    time_needed = turn_right_90_degrees(0,0)
+    time.sleep(time_needed)
+    # # go for 1 second
+    go_straight_n_seconds(0,0,0.6)
+    time.sleep(0.6)
+    # # turn left 90 degrees
+    time_needed = turn_left_90_degrees(0,0)
+    time.sleep(time_needed)
+    # # # go for 1 second
+    go_straight_n_seconds(0, 0, 1.2)
+    time.sleep(1.2)
+    # # # turn left 90 degrees
+    time_needed = turn_left_90_degrees(0, 0)
+    time.sleep(time_needed)
+    # # # go for 1 second
     go_straight_n_seconds(0,0,1)
-    # turn left 90 degrees
-    turn_for_n_degrees(0, 0, -90)
-    # go for 1 second
-    go_straight_n_seconds(0, 0, 1)
-    # turn left 90 degrees
-    turn_for_n_degrees(0, 0, -90)
-    # go for 1 second
-    go_straight_n_seconds(0, 0, 1)
-    # turn right 90 degrees
-    turn_for_n_degrees(linv_ori, angv_ori, 90)
+    time.sleep(1)
+    # # turn right 90 degrees
+    turn_right_60_degrees(linv_ori, angv_ori)
+def detect_yellow_area(image):
+    # Convert RGB image to HSV
+    hsv = cv2.cvtColor(image, cv2.COLOR_RGB2HSV)
+
+    # Define range of yellow color in HSV
+    lower_yellow = np.array([15, 100, 100])
+    upper_yellow = np.array([30, 255, 255])
+
+    # Threshold the HSV image to get only yellow colors
+    mask = cv2.inRange(hsv, lower_yellow, upper_yellow)
+
+    # Bitwise-AND mask and original image
+    res = cv2.bitwise_and(image, image, mask=mask)
+
+    # Check if there's yellow in the image
+    params = cv2.SimpleBlobDetector_Params()
+    params.minArea = 4*5 # Not a single pixel I guess...
+    params.filterByInertia = False
+    params.filterByConvexity = False  # Duck is not very convex...
+    detector = cv2.SimpleBlobDetector.create(params)
+    keypoints = detector.detect(res)
+    # Print the result
+    if len(keypoints) > 0:
+        print("Yellow detected in the image!")
+        return True
+    else:
+        print("No yellow detected in the image.")
+    return False
 def analyze_image(image, prev_value):
     img_bottom = image[-200:, :]
     blur = cv2.GaussianBlur(img_bottom, (5, 5), 0)
@@ -229,7 +281,23 @@ def set_car_control(linear_v, angular_v):
     set_speed(left_in, right_in)
     return
 
-
+def detect_qrcode(image,linv_ori,angv_ori): # takes RGB as input
+    GRAY_image = cv2.cvtColor(image, cv2.COLOR_RGB2GRAY)
+    barcodes = decode(GRAY_image)
+    if len(barcodes) > 0:
+        print("Decoded Data : {}".format(barcodes))
+        if("car_rotate_720" in str(barcodes[0].data) ):
+            time_needed = Turn720Deg(linv_ori,angv_ori)
+            return True,time_needed
+        elif("car_turn_around" in str(barcodes[0].data)):
+            time_needed = TurnAround(linv_ori,angv_ori)
+            return True,time_needed
+        elif ("car_stop_10s" in str(barcodes[0].data)):
+            time_needed = Stop10s(linv_ori, angv_ori)
+            return True,time_needed
+    else:
+        print("QR Code not detected")
+        return False, 0
 def control_car(dry_run=False):
     cap = init_cam()
     killer = GracefulKiller()
@@ -256,6 +324,10 @@ def control_car(dry_run=False):
         print(f"Set speed lin: {linear_v}, ang: {angular_v}")
 
         image = get_image(cap, killer)
+        qrcode_detected, time_needed = detect_qrcode(image, linear_v, angular_v)
+        if qrcode_detected:
+            time.sleep(time_needed)
+            print("Camera paused for" + str(time_needed))
         current_position = analyze_image(image, current_position)
         print(f"current line position: {current_position}")
 
