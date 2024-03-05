@@ -103,39 +103,46 @@ def go_straight_n_seconds(linv_ori, angv_ori,n):
     set_car_control(linear_v=300, angular_v= 0)
     time.sleep(n)
     set_car_control(linv_ori, angv_ori)
-def turn_for_n_degrees(linv_ori, angv_ori,n):
+def turn_right_90_degrees(linv_ori, angv_ori):
     # n <0 left n>0 right
     ang_v = 90
-    if(n<0):
-        ang_v = -90
     # turning speed
-    time_needed = (n / ang_v)/3.14
+    time_needed = (90 / ang_v)/3.14
+    set_car_control(linear_v=0, angular_v=ang_v)
+    time.sleep(time_needed)
+    set_car_control(linear_v=linv_ori, angular_v=angv_ori)
+    return time_needed
+def turn_left_90_degrees(linv_ori, angv_ori):
+    # n <0 left n>0 right
+    ang_v = -90
+    # turning speed
+    time_needed = (90 / ang_v)/3.14
     set_car_control(linear_v=0, angular_v=ang_v)
     time.sleep(time_needed)
     set_car_control(linear_v=linv_ori, angular_v=angv_ori)
     return time_needed
 def avoid_duck(linv_ori, angv_ori):
     # turn right 90 degrees
-    time_needed = turn_for_n_degrees(0,0,90)
+    time_needed = turn_right_90_degrees(0,0)
     time.sleep(time_needed)
     # # go for 1 second
     go_straight_n_seconds(0,0,1)
     time.sleep(1)
     # # turn left 90 degrees
-    time_needed = turn_for_n_degrees(0, 0, -90)
+    time_needed = turn_left_90_degrees(0,0)
     time.sleep(time_needed)
     # # go for 1 second
     go_straight_n_seconds(0,0,2)
-    time.sleep(1)
+    time.sleep(2)
     # # turn left 90 degrees
-    turn_for_n_degrees(0, 0, -90)
-    time_needed = turn_for_n_degrees(0, 0, -90)
+    time_needed = turn_left_90_degrees(0, 0)
+    time.sleep(time_needed)
     time.sleep(time_needed)
     # # go for 1 second
     go_straight_n_seconds(0,0,1)
     time.sleep(1)
     # # turn right 90 degrees
-    turn_for_n_degrees(linv_ori, angv_ori, 90)
+    turn_right_90_degrees(linv_ori, angv_ori, 90)
 def detect_yellow_area(image):
     # Convert BGR image to HSV
     hsv = cv2.cvtColor(image, cv2.COLOR_RGB2HSV)
