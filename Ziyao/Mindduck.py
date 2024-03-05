@@ -116,9 +116,9 @@ def avoid_duck(linv_ori, angv_ori):
     # turn right 90 degrees
     turn_for_n_degrees(0,0,90)
     # # go for 1 second
-    # go_straight_n_seconds(0,0,1)
+    go_straight_n_seconds(0,0,1)
     # # turn left 90 degrees
-    # turn_for_n_degrees(0, 0, -90)
+    turn_for_n_degrees(0, 0, -90)
     # # go for 1 second
     # go_straight_n_seconds(0, 0, 1)
     # # turn left 90 degrees
