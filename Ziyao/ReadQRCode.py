@@ -123,7 +123,7 @@ def Turn720Deg(linv_ori,angv_ori):
     return time_needed
 def TurnAround(linv_ori, angv_ori):
     # Turn the car for 720
-    ang_v = 180
+    ang_v = 90
     # turning speed
     time_needed = (180 / ang_v)
     set_car_control(linear_v=0, angular_v=ang_v)
