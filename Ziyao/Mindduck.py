@@ -128,21 +128,21 @@ def avoid_duck(linv_ori, angv_ori):
     # # go for 1 second
     go_straight_n_seconds(0,0,1)
     time.sleep(1)
-    # # turn left 90 degrees
-    time_needed = turn_left_90_degrees(0,0)
-    time.sleep(time_needed)
-    # # go for 1 second
-    go_straight_n_seconds(0,0,2)
-    time.sleep(2)
-    # # turn left 90 degrees
-    time_needed = turn_left_90_degrees(0, 0)
-    time.sleep(time_needed)
-    time.sleep(time_needed)
-    # # go for 1 second
-    go_straight_n_seconds(0,0,1)
-    time.sleep(1)
-    # # turn right 90 degrees
-    turn_right_90_degrees(linv_ori, angv_ori, 90)
+    # # # turn left 90 degrees
+    # time_needed = turn_left_90_degrees(0,0)
+    # time.sleep(time_needed)
+    # # # go for 1 second
+    # go_straight_n_seconds(0,0,1)
+    # time.sleep(1)
+    # # # turn left 90 degrees
+    # time_needed = turn_left_90_degrees(0, 0)
+    # time.sleep(time_needed)
+    # time.sleep(time_needed)
+    # # # go for 1 second
+    # go_straight_n_seconds(0,0,1)
+    # time.sleep(1)
+    # # # turn right 90 degrees
+    # turn_right_90_degrees(linv_ori, angv_ori)
 def detect_yellow_area(image):
     # Convert BGR image to HSV
     hsv = cv2.cvtColor(image, cv2.COLOR_RGB2HSV)
