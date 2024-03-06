@@ -202,7 +202,8 @@ def detect_yellow_area(image):
         print("Yellow detected in the image!")
         return True
     else:
-        print("No yellow detected in the image.")
+        #print("No yellow detected in the image.")
+        pass
     return False
 def analyze_image(image, prev_value):
     img_bottom = image[-200:, :]
@@ -276,7 +277,7 @@ def set_car_control(linear_v, angular_v):
     left_in = sum - right_in
 
     # drive car with left and right control
-    print(left_in, right_in)
+    #print(left_in, right_in)
     set_speed(left_in, right_in)
     return
 
@@ -294,7 +295,7 @@ def detect_qrcode(image,linv_ori,angv_ori): # takes RGB as input
             time_needed = Stop10s(linv_ori, angv_ori)
             return True,time_needed
     else:
-        print("QR Code not detected")
+        #print("QR Code not detected")
         return False, 0
 def detect_yellow_area(image):
     # Convert BGR image to HSV
@@ -322,7 +323,8 @@ def detect_yellow_area(image):
         print("Yellow detected in the image!")
         return True
     else:
-        print("No yellow detected in the image.")
+        #print("No yellow detected in the image.")
+        pass
     return False
 def control_car(dry_run=False):
     cap = init_cam()
