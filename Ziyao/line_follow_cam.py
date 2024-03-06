@@ -341,7 +341,7 @@ def control_car(dry_run=False):
         angular_v = controller(current_position) - 3.14
         #current setup works
         linear_v = 300
-        angular_v *=20
+        angular_v *=30
         if (current_position < (image_gray.shape[1] / 5)) or (current_position > (image_gray.shape[1] - image_gray.shape[1] / 5)):
             linear_v = 0
             angular_v = angular_v * 3
@@ -351,7 +351,7 @@ def control_car(dry_run=False):
         #print(f"Set speed lin: {linear_v}, ang: {angular_v}")
 
         image_gray,image_ori = get_image(cap, killer)
-        qrcode_detected, time_needed = detect_qrcode(image_gray, linear_v, angular_v)
+        #qrcode_detected, time_needed = detect_qrcode(image_gray, linear_v, angular_v)
         #duck_detected = detect_yellow_area(image_ori)
         # if qrcode_detected:
         #     time.sleep(time_needed)
