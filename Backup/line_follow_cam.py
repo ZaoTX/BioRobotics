@@ -158,10 +158,6 @@ def close_cam(cap):
 
 
 def set_car_control(linear_v, angular_v):
-    if angular_v<=-180:
-        angular_v = -180
-    if angular_v>=180:
-        angular_v = 180
     # map from speed to wheel motor input
     a, b = 0.027384678763152703, -0.2914328262712497
     diff = (angular_v - b) / a
@@ -192,11 +188,11 @@ def control_car(dry_run=False):
 
         angular_v = controller(current_position) - 3.14
         #current setup works
-        linear_v = 300
+        linear_v = 500
         angular_v *=30
         if (current_position < (image.shape[1] / 5)) or (current_position > (image.shape[1] - image.shape[1] / 5)):
             linear_v = 0
-            angular_v = angular_v * 5
+            angular_v = angular_v * 4
 
         if not dry_run:
             set_car_control(linear_v, angular_v)
