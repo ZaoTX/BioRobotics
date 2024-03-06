@@ -70,8 +70,6 @@ class GracefulKiller:
     def exit_gracefully(self, signum, frame):
         self.kill_now = True
 
-def fun():
-    pass
 # controller for driving the car
 def find_white_pix(line, middle_idx):
     pos = None
@@ -348,25 +346,25 @@ def control_car(dry_run=False):
 
         if not dry_run:
             set_car_control(linear_v, angular_v)
-        print(f"Set speed lin: {linear_v}, ang: {angular_v}")
+        #print(f"Set speed lin: {linear_v}, ang: {angular_v}")
 
         image_gray,image_ori = get_image(cap, killer)
         qrcode_detected, time_needed = detect_qrcode(image_gray, linear_v, angular_v)
         duck_detected = detect_yellow_area(image_ori)
         if qrcode_detected:
             time.sleep(time_needed)
-            print("Camera paused for" + str(time_needed))
+            #print("Camera paused for" + str(time_needed))
 
         elif duck_detected:
             # Pause the camera capture
             avoid_duck(linear_v, angular_v)
             time.sleep(5)
-            print("Camera paused for" + str(5))
+            #print("Camera paused for" + str(5))
         current_position = analyze_image(image_gray, current_position)
-        print(f"current line position: {current_position}")
+        #print(f"current line position: {current_position}")
         elipsed_time = time.time() - start_time
 
-        print(f"===== processing time: {elipsed_time} s =====")
+        #print(f"===== processing time: {elipsed_time} s =====")
 
     set_speed(0, 0)
     print("process terminated")
