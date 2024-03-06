@@ -200,7 +200,7 @@ def control_car(dry_run=False):
 
         if not dry_run:
             set_car_control(linear_v, angular_v)
-        print(f"Set speed lin: {linear_v}, ang: {angular_v}")
+            print(f"Set speed lin: {linear_v}, ang: {angular_v}")
 
         image = get_image(cap, killer)
         current_position = analyze_image(image, current_position)
