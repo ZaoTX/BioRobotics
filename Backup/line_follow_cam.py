@@ -109,7 +109,7 @@ def analyze_image(image, prev_value):
     middle = int(base_line.shape[0] / 2)
 
     root_pos, root_index = find_white_pix(base_line, middle)
-    middle_pos, middle_index = find_white_pix(binary_img[-50], middle)
+    middle_pos, middle_index = find_white_pix(binary_img[-20], middle)
 
     current_value = 0
 
