@@ -101,7 +101,7 @@ def find_white_pix(line, middle_idx):
 
 
 def analyze_image(image, prev_value):
-    img_bottom = image[-200:, :]
+    img_bottom = image[-100:, :]
     blur = cv2.GaussianBlur(img_bottom, (5, 5), 0)
     ret, binary_img = cv2.threshold(blur, 0, 255, cv2.THRESH_BINARY_INV + cv2.THRESH_OTSU)
 
@@ -199,7 +199,7 @@ def control_car(dry_run=False):
             angular_v = angular_v * 5
         elif (current_position < (image.shape[1] / 5)) or (current_position > (image.shape[1] - image.shape[1] / 5)):
             linear_v = 0
-            angular_v = angular_v * 3
+            angular_v = angular_v * 4
 
         if not dry_run:
             set_car_control(linear_v, angular_v)
