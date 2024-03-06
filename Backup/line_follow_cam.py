@@ -172,7 +172,7 @@ def set_car_control(linear_v, angular_v):
     left_in = sum - right_in
 
     # drive car with left and right control
-    print(left_in, right_in)
+    #print(left_in, right_in)
     set_speed(left_in, right_in)
     return
 
@@ -188,11 +188,11 @@ def control_car(dry_run=False):
                      sample_time=1. / 30.)
 
     while not killer.kill_now:
-        start_time = time()
+        #start_time = time()
 
         angular_v = controller(current_position) - 3.14
         #current setup works
-        linear_v = 400
+        linear_v = 350
         angular_v *=25
         if (current_position < (image.shape[1] / 7)) or (current_position > (image.shape[1] - image.shape[1] / 7)):
             linear_v = 0
@@ -202,18 +202,18 @@ def control_car(dry_run=False):
             angular_v = angular_v * 4
         elif (current_position < (image.shape[1] / 4)) or (current_position > (image.shape[1] - image.shape[1] / 4)):
             linear_v = linear_v -50
-            angular_v = angular_v * 2
+            angular_v = angular_v * 3
         if not dry_run:
             set_car_control(linear_v, angular_v)
-            print(f"Set speed lin: {linear_v}, ang: {angular_v}")
+            #print(f"Set speed lin: {linear_v}, ang: {angular_v}")
 
             image = get_image(cap, killer)
             current_position = analyze_image(image, current_position)
-            print(f"current line position: {current_position}")
+            #print(f"current line position: {current_position}")
 
-            elipsed_time = time() - start_time
+            #elipsed_time = time() - start_time
 
-            print(f"===== processing time: {elipsed_time} s =====")
+            #print(f"===== processing time: {elipsed_time} s =====")
     close_cam(cap)
     set_speed(0, 0)
     print("process terminated")
