@@ -327,6 +327,8 @@ def control_car(dry_run=False):
     killer = GracefulKiller()
 
     image_gray, image_ori = get_image(cap, killer)
+    cv2.imshow("Image ori", image_ori)
+    cv2.imshow("Image gray", image_gray)
     image_middle = int(image_gray.shape[1] / 2)
     current_position = analyze_image(image_gray, 0)
     controller = PID(1, 0.1, 0.05, setpoint=image_middle, output_limits=(0, 6.28), starting_output=3.14,
