@@ -193,9 +193,13 @@ def control_car(dry_run=False):
 
         angular_v = controller(current_position) - 3.14
         #current setup works
-
         angular_v *=30
-        linear_v = int( 400 - np.abs(angular_v))
+        if np.abs(angular_v) < 1:
+            linear_v = int(400 - np.abs(angular_v))
+        else :
+            linear_v = int(400 - np.abs(angular_v)*1.5)
+
+
         # if linear_v <300:
         #     linear_v = 300
         if (current_position < (image.shape[1] / 7)) or (current_position > (image.shape[1] - image.shape[1] / 7)):
