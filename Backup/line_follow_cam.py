@@ -209,7 +209,7 @@ def control_car(dry_run=False):
             elipsed_time = time() - start_time
 
             print(f"===== processing time: {elipsed_time} s =====")
-
+    close_cam(cap)
     set_speed(0, 0)
     print("process terminated")
 
