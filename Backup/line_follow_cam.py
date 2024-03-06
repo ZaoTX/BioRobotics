@@ -197,14 +197,14 @@ def control_car(dry_run=False):
         if (current_position < (image.shape[1] / 7)) or (current_position > (image.shape[1] - image.shape[1] / 7)):
             print("sharp truning")
             linear_v = 0
-            angular_v = angular_v * 6
+            angular_v = angular_v * 9
         elif (current_position < (image.shape[1] / 5)) or (current_position > (image.shape[1] - image.shape[1] / 5)):
             linear_v = 0
-            angular_v = angular_v * 5
+            angular_v = angular_v * 7
         elif (current_position < (image.shape[1] / 4)) or (current_position > (image.shape[1] - image.shape[1] / 4)):
 
             linear_v = linear_v -50
-            angular_v = angular_v * 3
+            angular_v = angular_v * 5
         if not dry_run:
             set_car_control(linear_v, angular_v)
             #print(f"Set speed lin: {linear_v}, ang: {angular_v}")
