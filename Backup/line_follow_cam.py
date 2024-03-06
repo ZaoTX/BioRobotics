@@ -149,11 +149,13 @@ def get_image(cap, killer):
     ret, frame = cap.read()
     # if killer.kill_now:
     #     return np.zeros((480, 640))
-    frame = frame.astype("uint8")
-    frame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-    # save last frame
-    cv2.imwrite("Ducks/last_frame.png", frame)
-    return frame
+    if frame is not None:
+        frame = frame.astype("uint8")
+        frame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+        # save last frame
+        cv2.imwrite("Ducks/last_frame.png", frame)
+        return frame
+    return None
 
 
 def close_cam(cap):
@@ -191,8 +193,11 @@ def control_car(dry_run=False):
 
         angular_v = controller(current_position) - 3.14
         #current setup works
-        linear_v = 400
+
         angular_v *=30
+        linear_v = int( 400 - np.abs(angular_v))
+        if linear_v <300:
+            linear_v = 300
         if (current_position < (image.shape[1] / 5)) or (current_position > (image.shape[1] - image.shape[1] / 5)):
             linear_v = 0
             angular_v = angular_v * 3
