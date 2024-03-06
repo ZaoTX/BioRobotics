@@ -158,6 +158,10 @@ def close_cam(cap):
 
 
 def set_car_control(linear_v, angular_v):
+    if angular_v<=-180:
+        angular_v = -180
+    if angular_v>=180:
+        angular_v = 180
     # map from speed to wheel motor input
     a, b = 0.027384678763152703, -0.2914328262712497
     diff = (angular_v - b) / a
