@@ -70,7 +70,8 @@ class GracefulKiller:
     def exit_gracefully(self, signum, frame):
         self.kill_now = True
 
-
+def fun():
+    pass
 # controller for driving the car
 def find_white_pix(line, middle_idx):
     pos = None
