@@ -202,13 +202,13 @@ def control_car(dry_run=False):
             set_car_control(linear_v, angular_v)
             print(f"Set speed lin: {linear_v}, ang: {angular_v}")
 
-        image = get_image(cap, killer)
-        current_position = analyze_image(image, current_position)
-        print(f"current line position: {current_position}")
+            image = get_image(cap, killer)
+            current_position = analyze_image(image, current_position)
+            print(f"current line position: {current_position}")
 
-        elipsed_time = time() - start_time
+            elipsed_time = time() - start_time
 
-        print(f"===== processing time: {elipsed_time} s =====")
+            print(f"===== processing time: {elipsed_time} s =====")
 
     set_speed(0, 0)
     print("process terminated")
