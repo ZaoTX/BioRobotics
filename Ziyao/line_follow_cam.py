@@ -335,10 +335,10 @@ def control_car(dry_run=False):
                      sample_time=1. / 30.)
 
     while not killer.kill_now:
-        start_time = time.time()
+        #start_time = time.time()
         angular_v = controller(current_position) - 3.14
         #current setup works
-        linear_v = 500
+        linear_v = 400
         angular_v *=30
         if (current_position < (image_gray.shape[1] / 5)) or (current_position > (image_gray.shape[1] - image_gray.shape[1] / 5)):
             linear_v = 0
@@ -362,7 +362,7 @@ def control_car(dry_run=False):
         #     #print("Camera paused for" + str(5))
         current_position = analyze_image(image_gray, current_position)
         #print(f"current line position: {current_position}")
-        elipsed_time = time.time() - start_time
+        #elipsed_time = time.time() - start_time
 
         #print(f"===== processing time: {elipsed_time} s =====")
 
