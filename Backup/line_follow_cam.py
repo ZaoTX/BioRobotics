@@ -202,7 +202,7 @@ def control_car(dry_run=False):
             linear_v = int(700)
         elif np.abs(angular_v) < 1:
             angular_v *= 20
-            linear_v = int(600 - np.abs(angular_v))
+            linear_v = int(700 - np.abs(angular_v))
         elif np.abs(angular_v) <2:
             angular_v *= 30
             linear_v = int(550 - np.abs(angular_v))
@@ -225,7 +225,7 @@ def control_car(dry_run=False):
         # el
         if (current_position < (image.shape[1] / 5)) or (current_position > (image.shape[1] - image.shape[1] / 5)):
             linear_v = 0
-            angular_v = angular_v * 5
+            angular_v = angular_v * 3
         # elif (current_position < (image.shape[1] / 5)) or (current_position > (image.shape[1] - image.shape[1] / 5)):
         #     linear_v = 0
         #     angular_v = angular_v * 2
