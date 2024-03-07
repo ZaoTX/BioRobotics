@@ -4,7 +4,7 @@ import numpy as np
 from time import sleep
 from time import time
 import signal
-
+from scipy.ndimage import rotate
 import Adafruit_PCA9685
 import RPi.GPIO as GPIO
 
@@ -148,9 +148,10 @@ def get_image(cap, killer):
         return np.zeros((480, 640))
     frame = frame.astype("uint8")
     frame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+    rotated_img = rotate(frame, angle=45, reshape=False, mode='nearest')
     # save last frame
     cv2.imwrite("Ducks/last_frame.png", frame)
-    return frame
+    return rotated_img
 
 
 def close_cam(cap):
