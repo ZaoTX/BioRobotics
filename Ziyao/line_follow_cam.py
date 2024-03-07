@@ -348,6 +348,7 @@ def control_car(dry_run=False):
     while not killer.kill_now:
         if duck_detected:
             stop_car()
+            time.sleep(1)
             print("car stopped")
         elif qrcode_detected:
             time_needed = qrcode_perform_action(action)
