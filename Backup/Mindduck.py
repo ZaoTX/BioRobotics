@@ -104,7 +104,7 @@ def detect_yellow_area(image):
     hsv = cv2.cvtColor(image, cv2.COLOR_RGB2HSV)
 
     # Define range of yellow color in HSV
-    lower_yellow = np.array([15, 100, 100])
+    lower_yellow = np.array([15, 50, 50])
     upper_yellow = np.array([30, 255, 255])
 
     # Threshold the HSV image to get only yellow colors
