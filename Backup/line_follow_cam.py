@@ -196,7 +196,7 @@ def control_car(dry_run=False):
 
         if np.abs(angular_v) < 0.314:
             angular_v *= 30
-            linear_v = int(500-( np.abs(angular_v)*0.3))
+            linear_v = int(550-(np.abs(angular_v)*0.3))
         elif np.abs(angular_v) < 1:
             angular_v *= 20
             linear_v = int(500 - np.abs(angular_v))
@@ -210,7 +210,7 @@ def control_car(dry_run=False):
             angular_v *= 40
             linear_v = int(450 - np.abs(angular_v))
         else :
-            angular_v *= 35
+            angular_v *= 40
             linear_v = 330
 
 
