@@ -62,7 +62,6 @@ def set_speed(speed_left, speed_right):
     pwm.set_pwm(ENA, 0, int(speed_left))
     pwm.set_pwm(ENB, 0, int(speed_right))
 
-
 class GracefulKiller:
     kill_now = False
 
@@ -193,10 +192,6 @@ def control_car(dry_run=False):
 
         angular_v = controller(current_position) - 3.14
         #current setup works
-        # if np.abs(angular_v) < 0.24:
-        #     angular_v *= 0
-        #     linear_v = int(600)
-        # el
         if np.abs(angular_v) < 0.5:
             angular_v *= 10
             linear_v = int(800)
@@ -222,7 +217,6 @@ def control_car(dry_run=False):
         # if (current_position < (image.shape[1] / 7)) or (current_position > (image.shape[1] - image.shape[1] / 7)):
         #     linear_v = 0
         #     angular_v = angular_v * 5
-        # el
         if (current_position < (image.shape[1] / 8)) or (current_position > (image.shape[1] - image.shape[1] / 8)):
             linear_v = 0
             angular_v = angular_v * 4

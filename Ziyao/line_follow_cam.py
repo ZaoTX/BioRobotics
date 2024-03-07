@@ -55,14 +55,15 @@ def set_speed(speed_left, speed_right):
     else:
         GPIO.output(IN4, GPIO.HIGH)
         GPIO.output(IN3, GPIO.LOW)
-
+    if int(speed_left)>=4095:
+        speed_left = 4094
+    if int(speed_right)>=4095:
+        speed_right = 4095
     pwm.set_pwm(ENA, 0, int(speed_left))
     pwm.set_pwm(ENB, 0, int(speed_right))
 
-
 class GracefulKiller:
     kill_now = False
-
     def __init__(self):
         signal.signal(signal.SIGINT, self.exit_gracefully)
         signal.signal(signal.SIGTERM, self.exit_gracefully)
@@ -98,7 +99,7 @@ def find_white_pix(line, middle_idx):
 
     return pos, index
 ################################ Actions ################################
-########### right
+########### QR Code ###########
 def Turn720Deg(linv_ori,angv_ori):
     #Turn the car for 720
     ang_v = 180
@@ -123,6 +124,9 @@ def Stop10s(linv_ori, angv_ori):
     set_car_control(linear_v=linv_ori, angular_v=angv_ori)
 
     return 10
+########### Avoid Duck ###########
+def stop_car():
+    set_speed(0,0)
 def go_straight_n_seconds(linv_ori, angv_ori,n):
     set_car_control(linear_v=376, angular_v= 0)
     time.sleep(n)
@@ -338,11 +342,11 @@ def control_car(dry_run=False):
         #start_time = time.time()
         angular_v = controller(current_position) - 3.14
         #current setup works
-        linear_v = 400
+        linear_v = 300
         angular_v *=30
         if (current_position < (image_gray.shape[1] / 5)) or (current_position > (image_gray.shape[1] - image_gray.shape[1] / 5)):
             linear_v = 0
-            angular_v = angular_v * 4
+            angular_v = angular_v * 3
 
         if not dry_run:
             set_car_control(linear_v, angular_v)
@@ -350,7 +354,7 @@ def control_car(dry_run=False):
 
         image_gray,image_ori = get_image(cap, killer)
         #qrcode_detected, time_needed = detect_qrcode(image_gray, linear_v, angular_v)
-        #duck_detected = detect_yellow_area(image_ori)
+        duck_detected = detect_yellow_area(image_ori)
         # if qrcode_detected:
         #     time.sleep(time_needed)
         #     #print("Camera paused for" + str(time_needed))
