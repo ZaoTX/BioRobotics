@@ -326,7 +326,10 @@ def detect_yellow_area(image):
     # params.filterByConvexity = False  # Duck is not very convex...
     # detector = cv2.SimpleBlobDetector.create(params)
     # keypoints = detector.detect(res)
-    # Print the result
+    # # Print the result
+    # if len(keypoints) > 1:
+    #     print("Yellow detected in the image!")
+    #     return True
     if num_white_pixels > 1:
         print("Yellow detected in the image!")
         return True
