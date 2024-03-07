@@ -112,7 +112,7 @@ def analyze_image(image, prev_value):
     middle = int(base_line.shape[0] / 2)
 
     root_pos, root_index = find_white_pix(base_line, middle)
-    middle_pos, middle_index = find_white_pix(binary_img[-25], middle)
+    middle_pos, middle_index = find_white_pix(binary_img[-30], middle)
 
     current_value = 0
 
@@ -199,10 +199,10 @@ def control_car(dry_run=False):
         # el
         if np.abs(angular_v) < 0.5:
             angular_v *= 10
-            linear_v = int(600)
+            linear_v = int(700)
         elif np.abs(angular_v) < 1:
             angular_v *= 20
-            linear_v = int(550 - np.abs(angular_v))
+            linear_v = int(600 - np.abs(angular_v))
         elif np.abs(angular_v) <2:
             angular_v *= 30
             linear_v = int(550 - np.abs(angular_v))
@@ -223,7 +223,7 @@ def control_car(dry_run=False):
         #     linear_v = 0
         #     angular_v = angular_v * 5
         # el
-        if (current_position < (image.shape[1] / 6)) or (current_position > (image.shape[1] - image.shape[1] / 6)):
+        if (current_position < (image.shape[1] / 5)) or (current_position > (image.shape[1] - image.shape[1] / 5)):
             linear_v = 0
             angular_v = angular_v * 5
         # elif (current_position < (image.shape[1] / 5)) or (current_position > (image.shape[1] - image.shape[1] / 5)):
