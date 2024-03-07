@@ -205,9 +205,6 @@ def detect_yellow_area(image):
     if len(keypoints) > 0:
         print("Yellow detected in the image!")
         return True
-    else:
-        #print("No yellow detected in the image.")
-        pass
     return False
 def analyze_image(image, prev_value):
     img_bottom = image[-200:, :]
