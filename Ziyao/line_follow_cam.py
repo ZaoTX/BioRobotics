@@ -346,7 +346,7 @@ def control_car(dry_run=False):
     duck_detected = False
     qrcode_detected = False
     action = None
-    linear_v = 300
+    linear_v = 250
     angular_v = 0
     while not killer.kill_now:
         if duck_detected:
