@@ -286,17 +286,27 @@ def detect_qrcode(image,linv_ori,angv_ori): # takes RGB as input
     if len(barcodes) > 0:
         print("Decoded Data : {}".format(barcodes))
         if("car_rotate_720" in str(barcodes[0].data) ):
-            time_needed = Turn720Deg(linv_ori,angv_ori)
-            return True,time_needed
+            # time_needed = Turn720Deg(linv_ori,angv_ori)
+            return True,"car_rotate_720"
         elif("car_turn_around" in str(barcodes[0].data)):
-            time_needed = TurnAround(linv_ori,angv_ori)
-            return True,time_needed
+            # time_needed = TurnAround(linv_ori,angv_ori)
+            return True,"car_turn_around"
         elif ("car_stop_10s" in str(barcodes[0].data)):
-            time_needed = Stop10s(linv_ori, angv_ori)
-            return True,time_needed
+            # time_needed = Stop10s(linv_ori, angv_ori)
+            return True,"car_stop_10s"
     else:
         #print("QR Code not detected")
         return False, 0
+def qrcode_perform_action(action):
+    if ("car_rotate_720" ==action):
+        time_needed = Turn720Deg(linv_ori,angv_ori)
+        return time_needed
+    elif ("car_turn_around"  ==action):
+        time_needed = TurnAround(linv_ori,angv_ori)
+        return time_needed
+    elif ("car_stop_10s"  ==action):
+        time_needed = Stop10s(linv_ori, angv_ori)
+        return time_needed
 def detect_yellow_area(image):
     # Convert BGR image to HSV
     hsv = cv2.cvtColor(image, cv2.COLOR_RGB2HSV)
@@ -337,38 +347,38 @@ def control_car(dry_run=False):
     current_position = analyze_image(image_gray, 0)
     controller = PID(1, 0.1, 0.05, setpoint=image_middle, output_limits=(0, 6.28), starting_output=3.14,
                      sample_time=1. / 30.)
-
+    duck_detected = False
+    qrcode_detected = False
+    action = None
     while not killer.kill_now:
-        #start_time = time.time()
-        angular_v = controller(current_position) - 3.14
-        #current setup works
-        linear_v = 300
-        angular_v *=30
-        if (current_position < (image_gray.shape[1] / 5)) or (current_position > (image_gray.shape[1] - image_gray.shape[1] / 5)):
-            linear_v = 0
-            angular_v = angular_v * 3
+        if duck_detected:
+            stop_car()
+            print("car stopped")
+        elif qrcode_detected:
+            time_needed = qrcode_perform_action(action)
+            #sleep to avoid the camera capturing qr code again
+            time.sleep(time_needed)
+            print("perform qr code action")
+        else:
+            print("line following")
+            #start_time = time.time()
+            angular_v = controller(current_position) - 3.14
+            #current setup works
+            linear_v = 300
+            angular_v *=30
+            if (current_position < (image_gray.shape[1] / 5)) or (current_position > (image_gray.shape[1] - image_gray.shape[1] / 5)):
+                linear_v = 0
+                angular_v = angular_v * 3
 
-        if not dry_run:
-            set_car_control(linear_v, angular_v)
+            if not dry_run:
+                set_car_control(linear_v, angular_v)
         #print(f"Set speed lin: {linear_v}, ang: {angular_v}")
 
         image_gray,image_ori = get_image(cap, killer)
-        #qrcode_detected, time_needed = detect_qrcode(image_gray, linear_v, angular_v)
+        qrcode_detected, action = detect_qrcode(image_gray, linear_v, angular_v)
         duck_detected = detect_yellow_area(image_ori)
-        # if qrcode_detected:
-        #     time.sleep(time_needed)
-        #     #print("Camera paused for" + str(time_needed))
-        #
-        # elif duck_detected:
-        #     # Pause the camera capture
-        #     avoid_duck(linear_v, angular_v)
-        #     time.sleep(5)
-        #     #print("Camera paused for" + str(5))
-        current_position = analyze_image(image_gray, current_position)
-        #print(f"current line position: {current_position}")
-        #elipsed_time = time.time() - start_time
 
-        #print(f"===== processing time: {elipsed_time} s =====")
+        current_position = analyze_image(image_gray, current_position)
 
     set_speed(0, 0)
     print("process terminated")
