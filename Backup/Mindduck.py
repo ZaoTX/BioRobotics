@@ -130,7 +130,7 @@ def detect_yellow_area(image):
     # if len(keypoints) > 1:
     #     print("Yellow detected in the image!")
     #     return True
-    if num_white_pixels > 16:
+    if num_white_pixels > 10:
         print("Yellow detected in the image!")
         return True
 def control_car(dry_run=False):
