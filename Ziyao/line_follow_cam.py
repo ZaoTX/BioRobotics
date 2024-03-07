@@ -327,7 +327,7 @@ def detect_yellow_area(image):
     # detector = cv2.SimpleBlobDetector.create(params)
     # keypoints = detector.detect(res)
     # Print the result
-    if len(num_white_pixels) > 1:
+    if num_white_pixels > 1:
         print("Yellow detected in the image!")
         return True
 
