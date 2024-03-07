@@ -299,13 +299,13 @@ def detect_qrcode(image,linv_ori,angv_ori): # takes RGB as input
         return False, 0
 def qrcode_perform_action(action):
     if ("car_rotate_720" ==action):
-        time_needed = Turn720Deg(linv_ori,angv_ori)
+        time_needed = Turn720Deg(0,0)
         return time_needed
     elif ("car_turn_around"  ==action):
-        time_needed = TurnAround(linv_ori,angv_ori)
+        time_needed = TurnAround(0,0)
         return time_needed
     elif ("car_stop_10s"  ==action):
-        time_needed = Stop10s(linv_ori, angv_ori)
+        time_needed = Stop10s(0, 0)
         return time_needed
 def detect_yellow_area(image):
     # Convert BGR image to HSV
@@ -341,8 +341,8 @@ def control_car(dry_run=False):
     killer = GracefulKiller()
 
     image_gray, image_ori = get_image(cap, killer)
-    cv2.imshow("Image ori", image_ori)
-    cv2.imshow("Image gray", image_gray)
+    # cv2.imshow("Image ori", image_ori)
+    # cv2.imshow("Image gray", image_gray)
     image_middle = int(image_gray.shape[1] / 2)
     current_position = analyze_image(image_gray, 0)
     controller = PID(1, 0.1, 0.05, setpoint=image_middle, output_limits=(0, 6.28), starting_output=3.14,

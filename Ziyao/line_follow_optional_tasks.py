@@ -55,7 +55,10 @@ def set_speed(speed_left, speed_right):
     else:
         GPIO.output(IN4, GPIO.HIGH)
         GPIO.output(IN3, GPIO.LOW)
-
+    if int(speed_left)>=4095:
+        speed_left = 4094
+    if int(speed_right)>=4095:
+        speed_right = 4095
     pwm.set_pwm(ENA, 0, int(speed_left))
     pwm.set_pwm(ENB, 0, int(speed_right))
 
@@ -159,10 +162,6 @@ def close_cam(cap):
 
 
 def set_car_control(linear_v, angular_v):
-    if angular_v<=-180:
-        angular_v = -180
-    if angular_v>=180:
-        angular_v = 180 # test to find out whether I can comment this
     # map from speed to wheel motor input
     a, b = 0.027384678763152703, -0.2914328262712497
     diff = (angular_v - b) / a
@@ -193,11 +192,11 @@ def control_car(dry_run=False):
 
         angular_v = controller(current_position) - 3.14
         #current setup works
-        linear_v = 500
+        linear_v = 300
         angular_v *=30
         if (current_position < (image.shape[1] / 5)) or (current_position > (image.shape[1] - image.shape[1] / 5)):
             linear_v = 0
-            angular_v = angular_v * 5
+            angular_v = angular_v * 3
 
         if not dry_run:
             set_car_control(linear_v, angular_v)
