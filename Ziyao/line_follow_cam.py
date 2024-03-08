@@ -324,10 +324,13 @@ def control_car(dry_run=False):
     action = None
     linear_v = 250
     angular_v = 0
+    last_duck_detected = False
+    last_qrcode_dtected = False
     while not killer.kill_now:
         if duck_detected:
             stop_car()
             print("car stopped")
+            last_duck_detected = True
         # elif qrcode_detected:
         #     time_needed = qrcode_perform_action(action)
         #     #sleep to avoid the camera capturing qr code again
@@ -335,6 +338,11 @@ def control_car(dry_run=False):
         #     print("perform qr code action")
         else:
             print("line following")
+            if(last_duck_detected or last_qrcode_dtected):
+                # do the PID analyze again
+                current_position = analyze_image(image_gray, current_position)
+                last_qrcode_dtected = False
+                last_duck_detected = False
             #start_time = time.time()
             angular_v = controller(current_position) - 3.14
             #current setup works
