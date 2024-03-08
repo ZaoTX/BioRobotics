@@ -329,6 +329,7 @@ def control_car(dry_run=False):
             stop_car()
             print("car stopped")
             last_duck_detected = True
+            time.sleep(1)
         # elif qrcode_detected:
         #     time_needed = qrcode_perform_action(action)
         #     #sleep to avoid the camera capturing qr code again
