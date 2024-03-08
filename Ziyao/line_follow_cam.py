@@ -301,7 +301,7 @@ def detect_yellow_area(image,last_duck_detected):
         if num_white_pixels>=1:
             return  True
     # # Print the result
-    if num_white_pixels > 7:
+    if num_white_pixels >6:
         print("Yellow detected in the image!")
         return True
 
