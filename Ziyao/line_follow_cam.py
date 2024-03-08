@@ -294,20 +294,20 @@ def detect_yellow_area(image):
     res = cv2.bitwise_and(image, image, mask=mask)
 
     # Check if there's yellow in the image
-    num_white_pixels = np.sum(res >= 230)  #
-    # params = cv2.SimpleBlobDetector_Params()
-    # params.minArea = 2*2 # Not a single pixel I guess...
-    # params.filterByInertia = False
-    # params.filterByConvexity = False  # Duck is not very convex...
-    # detector = cv2.SimpleBlobDetector.create(params)
-    # keypoints = detector.detect(res)
-    # # Print the result
-    # if len(keypoints) > 1:
-    #     print("Yellow detected in the image!")
-    #     return True
-    if num_white_pixels > 1:
+    # num_white_pixels = np.sum(res >= 230)  #
+    params = cv2.SimpleBlobDetector_Params()
+    params.minArea = 2*2 # Not a single pixel I guess...
+    params.filterByInertia = False
+    params.filterByConvexity = False  # Duck is not very convex...
+    detector = cv2.SimpleBlobDetector.create(params)
+    keypoints = detector.detect(res)
+    # Print the result
+    if len(keypoints) > 1:
         print("Yellow detected in the image!")
         return True
+    # if num_white_pixels > 1:
+    #     print("Yellow detected in the image!")
+    #     return True
 
     return False
 def control_car(dry_run=False):
