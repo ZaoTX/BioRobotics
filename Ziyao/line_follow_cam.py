@@ -281,7 +281,7 @@ def qrcode_perform_action(action):
         return time_needed
 def detect_yellow_area(image):
     # Convert BGR image to HSV
-    hsv = cv2.cvtColor(image, cv2.COLOR_RGB2HSV)
+    hsv = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
 
     # Define range of yellow color in HSV
     lower_yellow = np.array([15, 100, 100])
