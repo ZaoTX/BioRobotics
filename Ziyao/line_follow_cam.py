@@ -296,14 +296,9 @@ def detect_yellow_area(image):
     # Check if there's yellow in the image
     num_white_pixels = np.sum(res >= 200)  #
     print (num_white_pixels)
-    # params = cv2.SimpleBlobDetector_Params()
-    # params.minArea = 4*4 # Not a single pixel I guess...
-    # params.filterByInertia = False
-    # params.filterByConvexity = False  # Duck is not very convex...
-    # detector = cv2.SimpleBlobDetector.create(params)
-    # keypoints = detector.detect(res)
+
     # # Print the result
-    if num_white_pixels > 10:
+    if num_white_pixels > 7:
         print("Yellow detected in the image!")
         return True
 
