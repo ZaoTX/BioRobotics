@@ -296,13 +296,13 @@ def detect_yellow_area(image):
     # Check if there's yellow in the image
     # num_white_pixels = np.sum(res >= 230)  #
     params = cv2.SimpleBlobDetector_Params()
-    params.minArea = 10*10 # Not a single pixel I guess...
+    params.minArea = 7*7 # Not a single pixel I guess...
     params.filterByInertia = False
     params.filterByConvexity = False  # Duck is not very convex...
     detector = cv2.SimpleBlobDetector.create(params)
     keypoints = detector.detect(res)
     # Print the result
-    if len(keypoints) > 11:
+    if len(keypoints) > 20:
         print("Yellow detected in the image!")
         return True
     # if num_white_pixels > 1:
@@ -352,8 +352,8 @@ def control_car(dry_run=False):
         #print(f"Set speed lin: {linear_v}, ang: {angular_v}")
 
         image_gray,image_ori = get_image(cap, killer)
-        qrcode_detected, action = detect_qrcode(image_gray, linear_v, angular_v)
-        duck_detected = detect_yellow_area(image_ori)
+        # qrcode_detected, action = detect_qrcode(image_gray, linear_v, angular_v)
+        # duck_detected = detect_yellow_area(image_ori)
 
         current_position = analyze_image(image_gray, current_position)
 
