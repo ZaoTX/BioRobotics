@@ -279,7 +279,7 @@ def qrcode_perform_action(action):
     elif ("car_stop_10s"  ==action):
         time_needed = Stop10s(0, 0)
         return time_needed
-def detect_yellow_area(image):
+def detect_yellow_area(image,last_duck_detected):
     # Convert BGR image to HSV
     hsv = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
 
@@ -297,6 +297,9 @@ def detect_yellow_area(image):
     num_white_pixels = np.sum(res >= 200)  #
     print (num_white_pixels)
 
+    if last_duck_detected:
+        if num_white_pixels>=1:
+            return  True
     # # Print the result
     if num_white_pixels > 7:
         print("Yellow detected in the image!")
@@ -320,7 +323,7 @@ def control_car(dry_run=False):
     linear_v = 250
     angular_v = 0
     last_duck_detected = False
-    last_qrcode_dtected = False
+    last_qrcode_detected = False
     while not killer.kill_now:
         if duck_detected:
             stop_car()
@@ -333,11 +336,11 @@ def control_car(dry_run=False):
         #     print("perform qr code action")
         else:
             print("line following")
-            if(last_duck_detected or last_qrcode_dtected):
+            if(last_duck_detected or last_qrcode_detected):
                 # do the PID analyze again
                 image_gray, image_ori = get_image(cap, killer)
                 current_position = analyze_image(image_gray, current_position)
-                last_qrcode_dtected = False
+                last_qrcode_detected = False
                 last_duck_detected = False
             #start_time = time.time()
             angular_v = controller(current_position) - 3.14
@@ -357,7 +360,7 @@ def control_car(dry_run=False):
 
         current_position = analyze_image(image_gray, current_position)
 
-        duck_detected = detect_yellow_area(image_ori)
+        duck_detected = detect_yellow_area(image_ori,last_duck_detected)
 
     set_speed(0, 0)
     print("process terminated")
