@@ -303,7 +303,7 @@ def detect_yellow_area(image):
     # detector = cv2.SimpleBlobDetector.create(params)
     # keypoints = detector.detect(res)
     # # Print the result
-    if num_white_pixels > 20:
+    if num_white_pixels > 30:
         print("Yellow detected in the image!")
         return True
 
@@ -327,7 +327,6 @@ def control_car(dry_run=False):
     while not killer.kill_now:
         if duck_detected:
             stop_car()
-            time.sleep(1)
             print("car stopped")
         # elif qrcode_detected:
         #     time_needed = qrcode_perform_action(action)
