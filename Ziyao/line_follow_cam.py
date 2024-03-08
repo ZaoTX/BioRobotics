@@ -255,20 +255,20 @@ def set_car_control(linear_v, angular_v):
 
 def detect_qrcode(image,linv_ori,angv_ori): # takes RGB as input
     barcodes = decode(image)
-    if len(barcodes) > 0:
-        print("Decoded Data : {}".format(barcodes))
-        if("car_rotate_720" in str(barcodes[0].data) ):
-            # time_needed = Turn720Deg(linv_ori,angv_ori)
-            return True,"car_rotate_720"
-        elif("car_turn_around" in str(barcodes[0].data)):
-            # time_needed = TurnAround(linv_ori,angv_ori)
-            return True,"car_turn_around"
-        elif ("car_stop_10s" in str(barcodes[0].data)):
-            # time_needed = Stop10s(linv_ori, angv_ori)
-            return True,"car_stop_10s"
-    else:
+    # if len(barcodes) > 0:
+    #     print("Decoded Data : {}".format(barcodes))
+    #     if("car_rotate_720" in str(barcodes[0].data) ):
+    #         # time_needed = Turn720Deg(linv_ori,angv_ori)
+    #         return True,"car_rotate_720"
+    #     elif("car_turn_around" in str(barcodes[0].data)):
+    #         # time_needed = TurnAround(linv_ori,angv_ori)
+    #         return True,"car_turn_around"
+    #     elif ("car_stop_10s" in str(barcodes[0].data)):
+    #         # time_needed = Stop10s(linv_ori, angv_ori)
+    #         return True,"car_stop_10s"
+    # else:
         #print("QR Code not detected")
-        return False, 0
+    return False, 0
 def qrcode_perform_action(action):
     if ("car_rotate_720" ==action):
         time_needed = Turn720Deg(0,0)
