@@ -296,7 +296,7 @@ def detect_yellow_area(image):
     # Check if there's yellow in the image
     # num_white_pixels = np.sum(res >= 230)  #
     params = cv2.SimpleBlobDetector_Params()
-    params.minArea = 7*7 # Not a single pixel I guess...
+    params.minArea = 4*4 # Not a single pixel I guess...
     params.filterByInertia = False
     params.filterByConvexity = False  # Duck is not very convex...
     detector = cv2.SimpleBlobDetector.create(params)
@@ -305,9 +305,6 @@ def detect_yellow_area(image):
     if len(keypoints) > 20:
         print("Yellow detected in the image!")
         return True
-    # if num_white_pixels > 1:
-    #     print("Yellow detected in the image!")
-    #     return True
 
     return False
 def control_car(dry_run=False):
@@ -327,15 +324,17 @@ def control_car(dry_run=False):
     linear_v = 250
     angular_v = 0
     while not killer.kill_now:
-        if duck_detected:
-            stop_car()
-            time.sleep(1)
-            print("car stopped")
-        elif qrcode_detected:
-            time_needed = qrcode_perform_action(action)
-            #sleep to avoid the camera capturing qr code again
-            time.sleep(time_needed)
-            print("perform qr code action")
+        # if duck_detected:
+        #     stop_car()
+        #     time.sleep(1)
+        #     print("car stopped")
+        # elif qrcode_detected:
+        #     time_needed = qrcode_perform_action(action)
+        #     #sleep to avoid the camera capturing qr code again
+        #     time.sleep(time_needed)
+        #     print("perform qr code action")
+        if False:
+            pass
         else:
             print("line following")
             #start_time = time.time()
