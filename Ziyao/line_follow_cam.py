@@ -180,32 +180,7 @@ def avoid_duck(linv_ori, angv_ori):
     time.sleep(1)
     # # turn right 90 degrees
     turn_right_60_degrees(linv_ori, angv_ori)
-def detect_yellow_area(image):
-    # Convert RGB image to HSV
-    hsv = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
 
-    # Define range of yellow color in HSV
-    lower_yellow = np.array([15, 100, 100])
-    upper_yellow = np.array([30, 255, 255])
-
-    # Threshold the HSV image to get only yellow colors
-    mask = cv2.inRange(hsv, lower_yellow, upper_yellow)
-
-    # Bitwise-AND mask and original image
-    res = cv2.bitwise_and(image, image, mask=mask)
-
-    # Check if there's yellow in the image
-    params = cv2.SimpleBlobDetector_Params()
-    params.minArea = 4*5 # Not a single pixel I guess...
-    params.filterByInertia = False
-    params.filterByConvexity = False  # Duck is not very convex...
-    detector = cv2.SimpleBlobDetector.create(params)
-    keypoints = detector.detect(res)
-    # Print the result
-    if len(keypoints) > 0:
-        print("Yellow detected in the image!")
-        return True
-    return False
 def analyze_image(image, prev_value):
     img_bottom = image[-200:, :]
     blur = cv2.GaussianBlur(img_bottom, (5, 5), 0)
