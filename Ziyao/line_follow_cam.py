@@ -284,7 +284,7 @@ def detect_yellow_area(image):
     hsv = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
 
     # Define range of yellow color in HSV
-    lower_yellow = np.array([15, 100, 100])
+    lower_yellow = np.array([15, 50, 50])
     upper_yellow = np.array([30, 255, 255])
 
     # Threshold the HSV image to get only yellow colors
@@ -325,17 +325,15 @@ def control_car(dry_run=False):
     linear_v = 250
     angular_v = 0
     while not killer.kill_now:
-        # if duck_detected:
-        #     stop_car()
-        #     time.sleep(1)
-        #     print("car stopped")
+        if duck_detected:
+            stop_car()
+            time.sleep(1)
+            print("car stopped")
         # elif qrcode_detected:
         #     time_needed = qrcode_perform_action(action)
         #     #sleep to avoid the camera capturing qr code again
         #     time.sleep(time_needed)
         #     print("perform qr code action")
-        if False:
-            pass
         else:
             print("line following")
             #start_time = time.time()
