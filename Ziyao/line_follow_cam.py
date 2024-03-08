@@ -340,6 +340,7 @@ def control_car(dry_run=False):
             print("line following")
             if(last_duck_detected or last_qrcode_dtected):
                 # do the PID analyze again
+                image_gray, image_ori = get_image(cap, killer)
                 current_position = analyze_image(image_gray, current_position)
                 last_qrcode_dtected = False
                 last_duck_detected = False
@@ -350,7 +351,7 @@ def control_car(dry_run=False):
             angular_v *=30
             if (current_position < (image_gray.shape[1] / 5)) or (current_position > (image_gray.shape[1] - image_gray.shape[1] / 5)):
                 linear_v = 0
-                angular_v = angular_v * 3
+                angular_v = angular_v * 2
 
             if not dry_run:
                 set_car_control(linear_v, angular_v)
