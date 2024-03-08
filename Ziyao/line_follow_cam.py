@@ -303,7 +303,7 @@ def detect_yellow_area(image):
     # detector = cv2.SimpleBlobDetector.create(params)
     # keypoints = detector.detect(res)
     # # Print the result
-    if num_white_pixels > 5:
+    if num_white_pixels > 15:
         print("Yellow detected in the image!")
         return True
 
@@ -347,8 +347,8 @@ def control_car(dry_run=False):
             #start_time = time.time()
             angular_v = controller(current_position) - 3.14
             #current setup works
-            linear_v = 300
-            angular_v *=30
+            linear_v = 250
+            angular_v *=20
             if (current_position < (image_gray.shape[1] / 5)) or (current_position > (image_gray.shape[1] - image_gray.shape[1] / 5)):
                 linear_v = 0
                 angular_v = angular_v * 2
