@@ -348,9 +348,9 @@ def control_car(dry_run=False):
             #current setup works
             linear_v = 280
             angular_v *=20
-            if (current_position < (image_gray.shape[1] / 5)) or (current_position > (image_gray.shape[1] - image_gray.shape[1] / 5)):
-                linear_v = 0
-                angular_v = angular_v * 2
+            # if (current_position < (image_gray.shape[1] / 5)) or (current_position > (image_gray.shape[1] - image_gray.shape[1] / 5)):
+            #     linear_v = 0
+            #     angular_v = angular_v * 2
 
             if not dry_run:
                 set_car_control(linear_v, angular_v)
