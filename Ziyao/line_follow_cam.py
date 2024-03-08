@@ -294,7 +294,7 @@ def detect_yellow_area(image):
     res = cv2.bitwise_and(image, image, mask=mask)
 
     # Check if there's yellow in the image
-    num_white_pixels = np.sum(res >= 230)  #
+    num_white_pixels = np.sum(res >= 200)  #
     print (num_white_pixels)
     # params = cv2.SimpleBlobDetector_Params()
     # params.minArea = 4*4 # Not a single pixel I guess...
@@ -303,7 +303,7 @@ def detect_yellow_area(image):
     # detector = cv2.SimpleBlobDetector.create(params)
     # keypoints = detector.detect(res)
     # # Print the result
-    if num_white_pixels > 15:
+    if num_white_pixels > 20:
         print("Yellow detected in the image!")
         return True
 
