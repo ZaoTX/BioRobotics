@@ -352,8 +352,8 @@ def control_car(dry_run=False):
         #print(f"Set speed lin: {linear_v}, ang: {angular_v}")
 
         image_gray,image_ori = get_image(cap, killer)
-        qrcode_detected, action = detect_qrcode(image_gray, linear_v, angular_v)
-        duck_detected = detect_yellow_area(image_ori)
+        # qrcode_detected, action = detect_qrcode(image_gray, linear_v, angular_v)
+        # duck_detected = detect_yellow_area(image_ori)
 
         current_position = analyze_image(image_gray, current_position)
 
