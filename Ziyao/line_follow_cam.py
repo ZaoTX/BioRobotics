@@ -284,7 +284,7 @@ def detect_yellow_area(image,last_duck_detected):
     hsv = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
 
     # Define range of yellow color in HSV
-    lower_yellow = np.array([15, 50, 50])
+    lower_yellow = np.array([15, 25, 25])
     upper_yellow = np.array([30, 255, 255])
 
     # Threshold the HSV image to get only yellow colors
