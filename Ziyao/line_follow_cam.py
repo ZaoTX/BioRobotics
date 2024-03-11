@@ -254,7 +254,11 @@ def set_car_control(linear_v, angular_v):
     return
 
 def detect_qrcode(image,linv_ori,angv_ori): # takes RGB as input
-    barcodes = decode(image)
+    #barcodes = decode(image)
+    detector = cv2.QRCodeDetector()
+    data, vertices_array, binary_qrcode = detector.detectAndDecodeCurved()
+    if len(data)>0:
+        return True
     # if len(barcodes) > 0:
     #     print("Decoded Data : {}".format(barcodes))
     #     if("car_rotate_720" in str(barcodes[0].data) ):
@@ -360,7 +364,7 @@ def control_car(dry_run=False):
 
         current_position = analyze_image(image_gray, current_position)
 
-        #qrcode_detected, action = detect_qrcode(image_gray, linear_v, angular_v)
+        qrcode_detected, action = detect_qrcode(image_gray, linear_v, angular_v)
 
         #duck_detected = detect_yellow_area(image_ori,last_duck_detected)
 
