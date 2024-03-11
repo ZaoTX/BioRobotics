@@ -2,9 +2,9 @@ import cv2
 from simple_pid.pid import PID
 import numpy as np
 from time import sleep
-from time import time
+import time
 import signal
-from scipy.ndimage import rotate
+from pyzbar.pyzbar import decode
 import Adafruit_PCA9685
 import RPi.GPIO as GPIO
 
@@ -62,17 +62,14 @@ def set_speed(speed_left, speed_right):
     pwm.set_pwm(ENA, 0, int(speed_left))
     pwm.set_pwm(ENB, 0, int(speed_right))
 
-
 class GracefulKiller:
     kill_now = False
-
     def __init__(self):
         signal.signal(signal.SIGINT, self.exit_gracefully)
         signal.signal(signal.SIGTERM, self.exit_gracefully)
 
     def exit_gracefully(self, signum, frame):
         self.kill_now = True
-
 
 # controller for driving the car
 def find_white_pix(line, middle_idx):
@@ -101,10 +98,36 @@ def find_white_pix(line, middle_idx):
                 pass
 
     return pos, index
+################################ Actions ################################
+########### QR Code ###########
+def Turn720Deg(linv_ori,angv_ori):
+    #Turn the car for 720
+    ang_v = 180
+    # turning speed
+    time_needed = (720 / ang_v) * 0.7
+    set_car_control(linear_v=0, angular_v=ang_v)
+    time.sleep(time_needed)
+    set_car_control(linear_v=linv_ori, angular_v=angv_ori)
+    return time_needed
+def TurnAround(linv_ori, angv_ori):
+    # Turn the car for 720
+    ang_v = 180
+    # turning speed
+    time_needed = (180 / ang_v) * 0.6
+    set_car_control(linear_v=0, angular_v=ang_v)
+    time.sleep(time_needed)
+    set_car_control(linear_v=linv_ori, angular_v=angv_ori)
+    return time_needed
+def Stop10s(linv_ori, angv_ori):
+    set_car_control(linear_v=0, angular_v=0)
+    time.sleep(10)
+    set_car_control(linear_v=linv_ori, angular_v=angv_ori)
 
-
+    return 10
+def stop_car():
+    set_speed(0,0)
 def analyze_image(image, prev_value):
-    img_bottom = image[-100:, :]
+    img_bottom = image[-200:, :]
     blur = cv2.GaussianBlur(img_bottom, (5, 5), 0)
     ret, binary_img = cv2.threshold(blur, 0, 255, cv2.THRESH_BINARY_INV + cv2.THRESH_OTSU)
 
@@ -146,13 +169,14 @@ def init_cam():
 
 def get_image(cap, killer):
     # read image from pi car camera
-    ret, frame = cap.read()
+    ret, frame_ori = cap.read()
     if killer.kill_now:
         return np.zeros((480, 640))
-    frame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+    frame_ori = frame_ori.astype("uint8")
+    frame = cv2.cvtColor(frame_ori, cv2.COLOR_BGR2GRAY)
     # save last frame
-    cv2.imwrite("last_frame.png", frame)
-    return frame
+    #cv2.imwrite("Ducks/last_frame.png", frame)
+    return frame, frame_ori
 
 
 def close_cam(cap):
@@ -170,45 +194,90 @@ def set_car_control(linear_v, angular_v):
     left_in = sum - right_in
 
     # drive car with left and right control
-    print(left_in, right_in)
+    #print(left_in, right_in)
     set_speed(left_in, right_in)
-
     return
 
+def detect_qrcode(image): # takes RGB as input
+    barcodes = decode(image)
+    #detector = cv2.QRCodeDetector()
+    #data, vertices_array, binary_qrcode = detector.detectAndDecodeCurved(image)
+    if len(barcodes) > 0:
+        print("Decoded Data : {}".format(barcodes))
+        if("car_rotate_720" in str(barcodes[0].data) ):
+            # time_needed = Turn720Deg(linv_ori,angv_ori)
+            return True,"car_rotate_720"
+        elif("car_turn_around" in str(barcodes[0].data)):
+            # time_needed = TurnAround(linv_ori,angv_ori)
+            return True,"car_turn_around"
+        elif ("car_stop_10s" in str(barcodes[0].data)):
+            # time_needed = Stop10s(linv_ori, angv_ori)
+            return True,"car_stop_10s"
+    else:
+        print("QR Code not detected")
+    return False, 0
+def qrcode_perform_action(action):
+    if ("car_rotate_720" ==action):
+        time_needed = Turn720Deg(0,0)
+        return time_needed
+    elif ("car_turn_around"  ==action):
+        time_needed = TurnAround(0,0)
+        return time_needed
+    elif ("car_stop_10s"  ==action):
+        time_needed = Stop10s(0,0)
+        return time_needed
+def detect_yellow_area(image,last_duck_detected):
+    # Convert BGR image to HSV
+    hsv = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
 
+    # Define range of yellow color in HSV
+    lower_yellow = np.array([15, 25, 25])
+    upper_yellow = np.array([30, 255, 255])
+
+    # Threshold the HSV image to get only yellow colors
+    mask = cv2.inRange(hsv, lower_yellow, upper_yellow)
+
+    # Bitwise-AND mask and original image
+    res = cv2.bitwise_and(image, image, mask=mask)
+
+    # Check if there's yellow in the image
+    num_white_pixels = np.sum(res >= 200)  #
+    print (num_white_pixels)
+
+    if last_duck_detected:
+        if num_white_pixels>=1:
+            return  True
+    # # Print the result
+    if num_white_pixels >6:
+        print("Yellow detected in the image!")
+        return True
+
+    return False
 def control_car(dry_run=False):
     cap = init_cam()
     killer = GracefulKiller()
-
-    image = get_image(cap, killer)
-    image_middle = int(image.shape[1] / 2)
-    current_position = analyze_image(image, 0)
+    image_gray, image_ori = get_image(cap, killer)
+    image_middle = int(image_gray.shape[1] / 2)
+    current_position = analyze_image(image_gray, 0)
     controller = PID(1, 0.1, 0.05, setpoint=image_middle, output_limits=(0, 6.28), starting_output=3.14,
                      sample_time=1. / 30.)
-
     while not killer.kill_now:
-        start_time = time()
+        print("line following")
 
+        #start_time = time.time()
         angular_v = controller(current_position) - 3.14
-        # linear_v = 400 - abs(angular_v * 100 / 3.14)
+        #current setup works
         linear_v = 300
-        angular_v = angular_v * 30  # remap to (-100, 100), left positive, right negative
-
-        if (current_position < (image.shape[1] / 5)) or (current_position > (image.shape[1] - image.shape[1] / 5)):
+        angular_v *=30
+        if (current_position < (image_gray.shape[1] / 5)) or (current_position > (image_gray.shape[1] - image_gray.shape[1] / 5)):
             linear_v = 0
             angular_v = angular_v * 3
 
         if not dry_run:
             set_car_control(linear_v, angular_v)
-        print(f"Set speed lin: {linear_v}, ang: {angular_v}")
 
-        image = get_image(cap, killer)
-        current_position = analyze_image(image, current_position)
-        print(f"current line position: {current_position}")
+        image_gray,image_ori = get_image(cap, killer)
 
-        elipsed_time = time() - start_time
-
-        print(f"===== processing time: {elipsed_time} s =====")
 
     set_speed(0, 0)
     print("process terminated")
