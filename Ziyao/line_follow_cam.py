@@ -329,11 +329,11 @@ def control_car(dry_run=False):
     last_duck_detected = False
     last_qrcode_detected = False
     while not killer.kill_now:
-        # if duck_detected:
-        #     stop_car()
-        #     print("car stopped")
-        #     last_duck_detected = True
-        #     time.sleep(0.5)
+        if duck_detected:
+            stop_car()
+            print("car stopped")
+            last_duck_detected = True
+            time.sleep(0.5)
         # elif qrcode_detected:
         #     time_needed = qrcode_perform_action(action)
         #     #sleep to avoid the camera capturing qr code again
