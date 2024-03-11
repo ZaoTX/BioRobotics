@@ -256,7 +256,7 @@ def set_car_control(linear_v, angular_v):
 def detect_qrcode(image,linv_ori,angv_ori): # takes RGB as input
     #barcodes = decode(image)
     detector = cv2.QRCodeDetector()
-    data, vertices_array, binary_qrcode = detector.detectAndDecodeCurved()
+    data, vertices_array, binary_qrcode = detector.detectAndDecodeCurved(image)
     if len(data)>0:
         return True
     # if len(barcodes) > 0:
