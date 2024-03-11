@@ -365,7 +365,7 @@ def control_car(dry_run=False):
 
         current_position = analyze_image(image_gray, current_position)
 
-        qrcode_detected, action = detect_qrcode(image_gray, linear_v, angular_v)
+        #qrcode_detected, action = detect_qrcode(image_gray, linear_v, angular_v)
 
         #duck_detected = detect_yellow_area(image_ori,last_duck_detected)
 
