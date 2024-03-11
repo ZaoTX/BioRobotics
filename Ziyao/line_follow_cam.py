@@ -253,9 +253,9 @@ def set_car_control(linear_v, angular_v):
     set_speed(left_in, right_in)
     return
 
-def detect_qrcode(image,linv_ori,angv_ori): # takes RGB as input
+def detect_qrcode(image,detector): # takes RGB as input
     #barcodes = decode(image)
-    detector = cv2.QRCodeDetector()
+    #detector = cv2.QRCodeDetector()
     data, vertices_array, binary_qrcode = detector.detectAndDecodeCurved(image)
     if len(data)>0:
         return True
@@ -313,7 +313,7 @@ def detect_yellow_area(image,last_duck_detected):
 def control_car(dry_run=False):
     cap = init_cam()
     killer = GracefulKiller()
-
+    detector = cv2.QRCodeDetector()
     image_gray, image_ori = get_image(cap, killer)
     # cv2.imshow("Image ori", image_ori)
     # cv2.imshow("Image gray", image_gray)
@@ -365,7 +365,7 @@ def control_car(dry_run=False):
 
         current_position = analyze_image(image_gray, current_position)
 
-        #qrcode_detected, action = detect_qrcode(image_gray, linear_v, angular_v)
+        qrcode_detected, action = detect_qrcode(image_gray,detector)
 
         #duck_detected = detect_yellow_area(image_ori,last_duck_detected)
 
