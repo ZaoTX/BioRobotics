@@ -324,21 +324,23 @@ def control_car(dry_run=False):
     duck_detected = False
     qrcode_detected = False
     action = None
-    linear_v = 250
+    linear_v = 300
     angular_v = 0
     last_duck_detected = False
     last_qrcode_detected = False
     while not killer.kill_now:
-        if duck_detected:
-            stop_car()
-            print("car stopped")
-            last_duck_detected = True
-            time.sleep(0.5)
+        # if duck_detected:
+        #     stop_car()
+        #     print("car stopped")
+        #     last_duck_detected = True
+        #     time.sleep(0.5)
         # elif qrcode_detected:
         #     time_needed = qrcode_perform_action(action)
         #     #sleep to avoid the camera capturing qr code again
         #     time.sleep(time_needed)
         #     print("perform qr code action")
+        if False:
+            pass
         else:
             print("line following")
             if(last_duck_detected or last_qrcode_detected):
