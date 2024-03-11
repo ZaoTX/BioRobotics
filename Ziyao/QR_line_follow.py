@@ -257,21 +257,19 @@ def detect_qrcode(image): # takes RGB as input
     barcodes = decode(image)
     #detector = cv2.QRCodeDetector()
     #data, vertices_array, binary_qrcode = detector.detectAndDecodeCurved(image)
-    if len(barcodes)>0:
-        return True, ""
-    # if len(barcodes) > 0:
-    #     print("Decoded Data : {}".format(barcodes))
-    #     if("car_rotate_720" in str(barcodes[0].data) ):
-    #         # time_needed = Turn720Deg(linv_ori,angv_ori)
-    #         return True,"car_rotate_720"
-    #     elif("car_turn_around" in str(barcodes[0].data)):
-    #         # time_needed = TurnAround(linv_ori,angv_ori)
-    #         return True,"car_turn_around"
-    #     elif ("car_stop_10s" in str(barcodes[0].data)):
-    #         # time_needed = Stop10s(linv_ori, angv_ori)
-    #         return True,"car_stop_10s"
-    # else:
-        #print("QR Code not detected")
+    if len(barcodes) > 0:
+        print("Decoded Data : {}".format(barcodes))
+        if("car_rotate_720" in str(barcodes[0].data) ):
+            # time_needed = Turn720Deg(linv_ori,angv_ori)
+            return True,"car_rotate_720"
+        elif("car_turn_around" in str(barcodes[0].data)):
+            # time_needed = TurnAround(linv_ori,angv_ori)
+            return True,"car_turn_around"
+        elif ("car_stop_10s" in str(barcodes[0].data)):
+            # time_needed = Stop10s(linv_ori, angv_ori)
+            return True,"car_stop_10s"
+    else:
+        print("QR Code not detected")
     return False, 0
 def qrcode_perform_action(action):
     if ("car_rotate_720" ==action):
@@ -327,16 +325,12 @@ def control_car(dry_run=False):
     angular_v = 0
     last_qrcode_detected = False
     while not killer.kill_now:
+
         if qrcode_detected:
-            stop_car()
-            print("car stopped")
-            last_qrcode_detected = True
-            time.sleep(0.5)
-        # elif qrcode_detected:
-        #     time_needed = qrcode_perform_action(action)
-        #     #sleep to avoid the camera capturing qr code again
-        #     time.sleep(time_needed)
-        #     print("perform qr code action")
+            time_needed = qrcode_perform_action(action)
+            #sleep to avoid the camera capturing qr code again
+            time.sleep(time_needed)
+            print("perform qr code action")
         else:
             print("line following")
             if(last_qrcode_detected):
