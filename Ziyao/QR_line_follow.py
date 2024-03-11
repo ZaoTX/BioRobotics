@@ -331,7 +331,7 @@ def control_car(dry_run=False):
         if qrcode_detected:
             stop_car()
             print("car stopped")
-            last_duck_detected = True
+            last_qrcode_detected = True
             time.sleep(0.5)
         # elif qrcode_detected:
         #     time_needed = qrcode_perform_action(action)
@@ -359,7 +359,7 @@ def control_car(dry_run=False):
                 set_car_control(linear_v, angular_v)
 
         image_gray,image_ori = get_image(cap, killer)
-        #qrcode_detected, action = detect_qrcode(image_gray, detector)
+        qrcode_detected, action = detect_qrcode(image_gray, detector)
 
         current_position = analyze_image(image_gray, current_position)
 
