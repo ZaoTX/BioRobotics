@@ -152,7 +152,7 @@ def get_image(cap, killer):
         frame = frame.astype("uint8")
         frame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
         # save last frame
-        cv2.imwrite("Ducks/last_frame.png", frame)
+        #cv2.imwrite("Ducks/last_frame.png", frame)
         return frame
     return np.zeros((480, 640))
 
