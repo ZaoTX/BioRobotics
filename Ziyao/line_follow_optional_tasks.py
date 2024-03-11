@@ -104,7 +104,7 @@ def find_white_pix(line, middle_idx):
 
 
 def analyze_image(image, prev_value):
-    img_bottom = image[-150:, :]
+    img_bottom = image[-100:, :]
     blur = cv2.GaussianBlur(img_bottom, (5, 5), 0)
     ret, binary_img = cv2.threshold(blur, 0, 255, cv2.THRESH_BINARY_INV + cv2.THRESH_OTSU)
 
@@ -149,13 +149,9 @@ def get_image(cap, killer):
     ret, frame = cap.read()
     if killer.kill_now:
         return np.zeros((480, 640))
-    frame = frame.astype("uint8")
-    # rotated_img = rotate(frame, angle=-45, reshape=False)
-    # rotated_image_filled = np.where(rotated_img == 0, 255, rotated_img)
     frame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-
     # save last frame
-    cv2.imwrite("last_frame_not_rotated.png", frame)
+    cv2.imwrite("last_frame.png", frame)
     return frame
 
 
@@ -176,6 +172,7 @@ def set_car_control(linear_v, angular_v):
     # drive car with left and right control
     print(left_in, right_in)
     set_speed(left_in, right_in)
+
     return
 
 
@@ -193,9 +190,10 @@ def control_car(dry_run=False):
         start_time = time()
 
         angular_v = controller(current_position) - 3.14
-        #current setup works
+        # linear_v = 400 - abs(angular_v * 100 / 3.14)
         linear_v = 300
-        angular_v *=30
+        angular_v = angular_v * 30  # remap to (-100, 100), left positive, right negative
+
         if (current_position < (image.shape[1] / 5)) or (current_position > (image.shape[1] - image.shape[1] / 5)):
             linear_v = 0
             angular_v = angular_v * 3
