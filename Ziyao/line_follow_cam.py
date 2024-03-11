@@ -230,7 +230,7 @@ def get_image(cap, killer):
     frame_ori = frame_ori.astype("uint8")
     frame = cv2.cvtColor(frame_ori, cv2.COLOR_BGR2GRAY)
     # save last frame
-    cv2.imwrite("Ducks/last_frame.png", frame)
+    #cv2.imwrite("Ducks/last_frame.png", frame)
     return frame, frame_ori
 
 
