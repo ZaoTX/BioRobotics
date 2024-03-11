@@ -359,7 +359,6 @@ def control_car(dry_run=False):
 
             if not dry_run:
                 set_car_control(linear_v, angular_v)
-        #print(f"Set speed lin: {linear_v}, ang: {angular_v}")
 
         image_gray,image_ori = get_image(cap, killer)
         #qrcode_detected, action = detect_qrcode(image_gray, detector)
