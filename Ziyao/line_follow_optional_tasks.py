@@ -104,7 +104,7 @@ def find_white_pix(line, middle_idx):
 
 
 def analyze_image(image, prev_value):
-    img_bottom = image#[-150:, :]
+    img_bottom = image[-150:, :]
     blur = cv2.GaussianBlur(img_bottom, (5, 5), 0)
     ret, binary_img = cv2.threshold(blur, 0, 255, cv2.THRESH_BINARY_INV + cv2.THRESH_OTSU)
 
@@ -112,7 +112,7 @@ def analyze_image(image, prev_value):
     middle = int(base_line.shape[0] / 2)
 
     root_pos, root_index = find_white_pix(base_line, middle)
-    middle_pos, middle_index = find_white_pix(binary_img[-200], middle)
+    middle_pos, middle_index = find_white_pix(binary_img[-30], middle)
 
     current_value = 0
 
@@ -150,12 +150,12 @@ def get_image(cap, killer):
     if killer.kill_now:
         return np.zeros((480, 640))
     frame = frame.astype("uint8")
-    rotated_img = rotate(frame, angle=-45, reshape=False)
-    rotated_image_filled = np.where(rotated_img == 0, 255, rotated_img)
-    frame = cv2.cvtColor(rotated_image_filled, cv2.COLOR_BGR2GRAY)
+    # rotated_img = rotate(frame, angle=-45, reshape=False)
+    # rotated_image_filled = np.where(rotated_img == 0, 255, rotated_img)
+    frame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
 
     # save last frame
-    cv2.imwrite("last_frame.png", frame)
+    cv2.imwrite("last_frame_not_rotated.png", frame)
     return frame
 
 
