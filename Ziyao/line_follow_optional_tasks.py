@@ -150,7 +150,7 @@ def get_image(cap, killer):
     if killer.kill_now:
         return np.zeros((480, 640))
     frame = frame.astype("uint8")
-    rotated_img = rotate(frame, angle=45, reshape=False, mode='nearest')
+    rotated_img = rotate(frame, angle=-45, reshape=False, mode='nearest')
     rotated_image_filled = np.where(rotated_img == 0, 255, rotated_img)
     frame = cv2.cvtColor(rotated_image_filled, cv2.COLOR_BGR2GRAY)
 
