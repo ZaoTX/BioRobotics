@@ -62,7 +62,10 @@ def set_speed(speed_left, speed_right):
     else:
         GPIO.output(IN4, GPIO.HIGH)
         GPIO.output(IN3, GPIO.LOW)
-
+    if int(speed_left)>=4095:
+        speed_left = 4094
+    if int(speed_right)>=4095:
+        speed_right = 4095
     pwm.set_pwm(ENA, 0, int(speed_left))
     pwm.set_pwm(ENB, 0, int(speed_right))
 
