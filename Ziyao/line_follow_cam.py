@@ -342,6 +342,7 @@ def control_car(dry_run=False):
         else:
             print("line following")
             if(last_duck_detected or last_qrcode_detected):
+                print("last frame detected something")
                 # do the PID analyze again
                 image_gray, image_ori = get_image(cap, killer)
                 current_position = analyze_image(image_gray, current_position)
