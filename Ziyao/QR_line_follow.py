@@ -258,7 +258,7 @@ def detect_qrcode(image,detector): # takes RGB as input
     #detector = cv2.QRCodeDetector()
     data, vertices_array, binary_qrcode = detector.detectAndDecodeCurved(image)
     if len(data)>0:
-        return True
+        return True, ""
     # if len(barcodes) > 0:
     #     print("Decoded Data : {}".format(barcodes))
     #     if("car_rotate_720" in str(barcodes[0].data) ):
