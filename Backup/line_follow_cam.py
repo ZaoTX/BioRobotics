@@ -192,21 +192,21 @@ def control_car(dry_run=False):
 
         angular_v = controller(current_position) - 3.14
         #current setup works
-        if np.abs(angular_v) < 0.45:
+        if np.abs(angular_v) < 0.5:
             angular_v *= 10
             linear_v = int(800)
-        elif np.abs(angular_v) < 0.8:
-            angular_v *= 20
-            linear_v = int(700 - np.abs(angular_v))
-        elif np.abs(angular_v) <2:
-            angular_v *= 25
-            linear_v = int(700 - np.abs(angular_v))
-        elif np.abs(angular_v) < 2.5:
-            angular_v *= 35
-            linear_v = int(650 - np.abs(angular_v))
-        elif np.abs(angular_v) <3:
-            angular_v *= 50
-            linear_v = int(550 - np.abs(angular_v))
+        # elif np.abs(angular_v) < 0.8:
+        #     angular_v *= 20
+        #     linear_v = int(700 - np.abs(angular_v))
+        # elif np.abs(angular_v) <2:
+        #     angular_v *= 25
+        #     linear_v = int(700 - np.abs(angular_v))
+        # elif np.abs(angular_v) < 2.5:
+        #     angular_v *= 35
+        #     linear_v = int(650 - np.abs(angular_v))
+        # elif np.abs(angular_v) <3:
+        #     angular_v *= 50
+        #     linear_v = int(550 - np.abs(angular_v))
         else :
             angular_v *= 50
             linear_v = 400
