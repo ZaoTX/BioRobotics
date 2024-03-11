@@ -327,7 +327,7 @@ def control_car(dry_run=False):
     linear_v = 300
     angular_v = 0
     last_duck_detected = False
-    last_qrcode_detected = False
+    #last_qrcode_detected = False
     while not killer.kill_now:
         if duck_detected:
             stop_car()
@@ -341,7 +341,7 @@ def control_car(dry_run=False):
         #     print("perform qr code action")
         else:
             print("line following")
-            if(last_duck_detected or last_qrcode_detected):
+            if(last_duck_detected):
                 print("last frame detected something")
                 # do the PID analyze again
                 image_gray, image_ori = get_image(cap, killer)
