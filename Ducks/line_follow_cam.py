@@ -104,7 +104,7 @@ def find_white_pix(line, middle_idx):
 
 
 def analyze_image(image, prev_value):
-    img_bottom = image[-150:, :]
+    img_bottom = image[-100:, :]
     blur = cv2.GaussianBlur(img_bottom, (5, 5), 0)
     ret, binary_img = cv2.threshold(blur, 0, 255, cv2.THRESH_BINARY_INV + cv2.THRESH_OTSU)
 
@@ -112,7 +112,7 @@ def analyze_image(image, prev_value):
     middle = int(base_line.shape[0] / 2)
 
     root_pos, root_index = find_white_pix(base_line, middle)
-    middle_pos, middle_index = find_white_pix(binary_img[-25], middle)
+    middle_pos, middle_index = find_white_pix(binary_img[-35], middle)
 
     current_value = 0
 
