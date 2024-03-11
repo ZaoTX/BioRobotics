@@ -150,11 +150,12 @@ def get_image(cap, killer):
     if killer.kill_now:
         return np.zeros((480, 640))
     frame = frame.astype("uint8")
-    frame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
     rotated_img = rotate(frame, angle=-45, reshape=False, mode='nearest')
+    frame = cv2.cvtColor(rotated_img, cv2.COLOR_BGR2GRAY)
+
     # save last frame
     # cv2.imwrite("Ducks/last_frame.png", frame)
-    return rotated_img
+    return frame
 
 
 def close_cam(cap):
