@@ -220,7 +220,7 @@ def control_car(dry_run=False):
         if (current_position < (image.shape[1] / 7)) or (current_position > (image.shape[1] - image.shape[1] / 7)):
             linear_v = 0
             angular_v = angular_v * 4
-        elif (current_position < (image.shape[1] / 6)) or (current_position > (image.shape[1] - image.shape[1] / 6)):
+        elif (current_position < (image.shape[1] / 5)) or (current_position > (image.shape[1] - image.shape[1] / 5)):
             linear_v = 0
             angular_v = angular_v * 1.5
         if not dry_run:
