@@ -279,7 +279,7 @@ def qrcode_perform_action(action):
         time_needed = TurnAround(0,0)
         return time_needed
     elif ("car_stop_10s"  ==action):
-        time_needed = Stop10s(0, 0)
+        time_needed = Stop10s(0,0)
         return time_needed
 def detect_yellow_area(image,last_duck_detected):
     # Convert BGR image to HSV
@@ -326,13 +326,15 @@ def control_car(dry_run=False):
     last_qrcode_detected = False
     while not killer.kill_now:
 
-        if qrcode_detected:
-            time_needed = qrcode_perform_action(action)
+        if qrcode_detected and not last_qrcode_detected:
+            qrcode_perform_action(action)
+            last_qrcode_detected = True
             #sleep to avoid the camera capturing qr code again
-            time.sleep(time_needed)
+            time.sleep(1)
             print("perform qr code action")
         else:
             print("line following")
+            last_qrcode_detected = False
             if(last_qrcode_detected):
                 print("last frame detected something")
                 # do the PID analyze again
