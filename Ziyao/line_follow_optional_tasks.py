@@ -127,7 +127,7 @@ def Stop10s(linv_ori, angv_ori):
 def stop_car():
     set_speed(0,0)
 def analyze_image(image, prev_value):
-    img_bottom = image[-200:, :]
+    img_bottom = image[-100:, :]
     blur = cv2.GaussianBlur(img_bottom, (5, 5), 0)
     ret, binary_img = cv2.threshold(blur, 0, 255, cv2.THRESH_BINARY_INV + cv2.THRESH_OTSU)
 
@@ -175,7 +175,7 @@ def get_image(cap, killer):
     frame_ori = frame_ori.astype("uint8")
     frame = cv2.cvtColor(frame_ori, cv2.COLOR_BGR2GRAY)
     # save last frame
-    #cv2.imwrite("Ducks/last_frame.png", frame)
+    cv2.imwrite("Ducks/last_frame.png", frame)
     return frame, frame_ori
 
 
