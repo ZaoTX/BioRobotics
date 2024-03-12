@@ -111,7 +111,7 @@ def analyze_image(image, prev_value):
     middle = int(base_line.shape[0] / 2)
 
     root_pos, root_index = find_white_pix(base_line, middle)
-    middle_pos, middle_index = find_white_pix(binary_img[-25], middle)
+    middle_pos, middle_index = find_white_pix(binary_img[-20], middle)
 
     current_value = 0
 
@@ -192,11 +192,11 @@ def control_car(dry_run=False):
 
         angular_v = controller(current_position) - 3.14
         #current setup works
-        if np.abs(angular_v) <= 0.5:
+        if np.abs(angular_v) <= 0.4:
             angular_v *= 20
             linear_v = int(650)
         else :
-            angular_v *= 40
+            angular_v *= 35
             linear_v = 430
 
 
