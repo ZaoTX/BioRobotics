@@ -1,6 +1,6 @@
 import cv2
 import numpy as np
-
+from scipy import ndimage
 
 def get_image(cap, killer):
     # read image from pi car camera
@@ -12,18 +12,22 @@ def get_image(cap, killer):
     return np.zeros((480, 640))
 
 
-def rotate_image(image, angle):
-    # Get image dimensions
-    height, width = image.shape[:2]
+def rotate_image(img, angle):
+    pad_width = max(img.shape)
+    padded_img = np.pad(img, pad_width, mode='constant', constant_values=0)
 
-    # Calculate rotation matrix
-    rotation_matrix = cv2.getRotationMatrix2D((width / 2, height / 2), angle, 1.0)
+    # Rotate the padded image
+    rotated_img = ndimage.rotate(padded_img, angle, reshape=False, mode='nearest')
 
-    # Rotate the image with padding
-    rotated_image = cv2.warpAffine(image, rotation_matrix, (width, height), flags=cv2.INTER_LINEAR,
-                                   borderMode=cv2.BORDER_CONSTANT, borderValue=(0, 0, 0))
+    # Find bounding box of non-zero pixels in rotated image
+    non_zero_indices = np.nonzero(rotated_img)
+    bbox = np.min(non_zero_indices[0]), np.max(non_zero_indices[0]), np.min(non_zero_indices[1]), np.max(
+        non_zero_indices[1])
 
-    return rotated_image
+    # Crop the rotated image to remove black edges
+    cropped_rotated_img = rotated_img[bbox[0]:bbox[1], bbox[2]:bbox[3]]
+
+    return cropped_rotated_img
 
 
 # Example usage
@@ -34,7 +38,7 @@ while True:
     frame = get_image(cap, killer)
 
     # Rotate the image
-    rotated_frame = frame.rotate(-45, expand=True)
+    rotated_frame = frame.rotate(-60, expand=True)
     # Display the rotated image
     cv2.imshow('Rotated Image', rotated_frame)
 
