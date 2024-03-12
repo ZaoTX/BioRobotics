@@ -194,7 +194,7 @@ def control_car(dry_run=False):
         #current setup works
         if np.abs(angular_v) <= 0.314:
             angular_v *= 10
-            linear_v = int(600)
+            linear_v = int(500)
         else :
             angular_v *= 30
             linear_v = 350
