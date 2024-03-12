@@ -157,6 +157,7 @@ def rotate_image(img, angle):
     padded_img = np.pad(img, 1, mode='constant', constant_values=255)
     # Rotate the padded image
     rotated_img = ndimage.rotate(padded_img, angle, reshape=False, mode='nearest')
+    cv2.imwrite("rotated.png", rotated_img)
     return rotated_img
 def close_cam(cap):
     cap.release()
