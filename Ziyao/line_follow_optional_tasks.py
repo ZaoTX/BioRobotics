@@ -104,8 +104,9 @@ def find_white_pix(line, middle_idx):
 
 def analyze_image(image, prev_value):
     img_bottom = image[-100:, :]
-    cv2.imwrite("rotated.png", img_bottom)
+
     blur = cv2.GaussianBlur(img_bottom, (5, 5), 0)
+    cv2.imwrite("rotated.png", blur)
     ret, binary_img = cv2.threshold(blur, 0, 255, cv2.THRESH_BINARY_INV + cv2.THRESH_OTSU)
 
     base_line = binary_img[-3]
