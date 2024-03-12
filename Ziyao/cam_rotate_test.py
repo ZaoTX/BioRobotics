@@ -16,9 +16,6 @@ def rotate_image(img, angle):
     padded_img = np.pad(img, 1, mode='constant', constant_values=255)
     # Rotate the padded image
     rotated_img = ndimage.rotate(padded_img, angle, reshape=False, mode='nearest')
-
-
-
     return rotated_img
 
 

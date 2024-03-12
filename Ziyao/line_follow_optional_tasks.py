@@ -4,7 +4,7 @@ import numpy as np
 from time import sleep
 from time import time
 import signal
-
+from scipy import ndimage
 import Adafruit_PCA9685
 import RPi.GPIO as GPIO
 
@@ -103,15 +103,15 @@ def find_white_pix(line, middle_idx):
 
 
 def analyze_image(image, prev_value):
-    img_bottom = image[-200:, :]
+    img_bottom = image[-100:, :]
     blur = cv2.GaussianBlur(img_bottom, (5, 5), 0)
     ret, binary_img = cv2.threshold(blur, 0, 255, cv2.THRESH_BINARY_INV + cv2.THRESH_OTSU)
 
-    base_line = binary_img[-1]
+    base_line = binary_img[-3]
     middle = int(base_line.shape[0] / 2)
 
     root_pos, root_index = find_white_pix(base_line, middle)
-    middle_pos, middle_index = find_white_pix(binary_img[-35], middle)
+    middle_pos, middle_index = find_white_pix(binary_img[-30], middle)
 
     current_value = 0
 
@@ -149,10 +149,15 @@ def get_image(cap, killer):
     if frame is not None:
         frame = frame.astype("uint8")
         frame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+        frame = rotate_image(frame,-60)
         return frame
     return np.zeros((480, 640))
 
-
+def rotate_image(img, angle):
+    padded_img = np.pad(img, 1, mode='constant', constant_values=255)
+    # Rotate the padded image
+    rotated_img = ndimage.rotate(padded_img, angle, reshape=False, mode='nearest')
+    return rotated_img
 def close_cam(cap):
     cap.release()
 
