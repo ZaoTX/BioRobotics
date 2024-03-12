@@ -184,7 +184,7 @@ def avoid_duck(linv_ori, angv_ori):
 def analyze_image(image, prev_value):
     img_bottom = image[-100:, :]
     blur = cv2.GaussianBlur(img_bottom, (5, 5), 0)
-    cv2.imwrite("last_frame_straight.png", blur)
+    #cv2.imwrite("last_frame_straight.png", blur)
     ret, binary_img = cv2.threshold(blur, 0, 255, cv2.THRESH_BINARY_INV + cv2.THRESH_OTSU)
 
     base_line = binary_img[-1]
