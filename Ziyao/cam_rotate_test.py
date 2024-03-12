@@ -34,8 +34,7 @@ while True:
     frame = get_image(cap, killer)
 
     # Rotate the image
-    rotated_frame = rotate_image(frame, -45)  # Rotate counterclockwise by 45 degrees
-
+    rotated_frame = frame.rotate(-45, expand=True)
     # Display the rotated image
     cv2.imshow('Rotated Image', rotated_frame)
 
