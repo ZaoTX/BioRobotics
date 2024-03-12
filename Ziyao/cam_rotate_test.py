@@ -17,13 +17,7 @@ def rotate_image(img, angle):
     # Rotate the padded image
     rotated_img = ndimage.rotate(padded_img, angle, reshape=False, mode='nearest')
 
-    # Find bounding box of non-zero pixels in rotated image
-    non_zero_indices = np.nonzero(rotated_img)
-    bbox = np.min(non_zero_indices[0]), np.max(non_zero_indices[0]), np.min(non_zero_indices[1]), np.max(
-        non_zero_indices[1])
 
-    # Crop the rotated image to remove black edges
-    cropped_rotated_img = rotated_img[bbox[0]:bbox[1], bbox[2]:bbox[3]]
 
     return rotated_img
 
