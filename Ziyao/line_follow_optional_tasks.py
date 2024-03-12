@@ -151,7 +151,7 @@ def get_image(cap, killer):
     if frame is not None:
         frame = frame.astype("uint8")
         frame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-        frame = rotate_image(frame,-60)
+        frame = rotate_image(frame,-45)
         return frame
     return np.zeros((480, 640))
 
