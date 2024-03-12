@@ -182,7 +182,7 @@ def avoid_duck(linv_ori, angv_ori):
     turn_right_60_degrees(linv_ori, angv_ori)
 
 def analyze_image(image, prev_value):
-    img_bottom = image[-200:, :]
+    img_bottom = image[-100:, :]
     blur = cv2.GaussianBlur(img_bottom, (5, 5), 0)
     ret, binary_img = cv2.threshold(blur, 0, 255, cv2.THRESH_BINARY_INV + cv2.THRESH_OTSU)
 
@@ -364,6 +364,7 @@ def control_car(dry_run=False):
         #qrcode_detected, action = detect_qrcode(image_gray, detector)
 
         current_position = analyze_image(image_gray, current_position)
+        image_gray, image_ori = get_image(cap, killer)
         duck_detected = detect_yellow_area(image_ori,last_duck_detected)
 
     set_speed(0, 0)
