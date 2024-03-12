@@ -104,7 +104,7 @@ def Turn720Deg(linv_ori,angv_ori):
     #Turn the car for 720
     ang_v = 180
     # turning speed
-    time_needed = (720 / ang_v) * 0.6
+    time_needed = (720 / ang_v) * 0.55
     set_car_control(linear_v=0, angular_v=ang_v)
     time.sleep(time_needed)
     set_car_control(linear_v=linv_ori, angular_v=angv_ori)
@@ -124,11 +124,67 @@ def Stop10s(linv_ori, angv_ori):
     set_car_control(linear_v=linv_ori, angular_v=angv_ori)
 
     return 10
+########### Avoid Duck ###########
 def stop_car():
     set_speed(0,0)
+def go_straight_n_seconds(linv_ori, angv_ori,n):
+    set_car_control(linear_v=376, angular_v= 0)
+    time.sleep(n)
+    set_car_control(linv_ori, angv_ori)
+def turn_right_90_degrees(linv_ori, angv_ori):
+    # n <0 left n>0 right
+    ang_v = 90
+    # turning speed
+    time_needed = (90 / ang_v)/3.14
+    set_car_control(linear_v=0, angular_v=ang_v)
+    time.sleep(time_needed)
+    set_car_control(linear_v=linv_ori, angular_v=angv_ori)
+    return time_needed
+def turn_right_60_degrees(linv_ori, angv_ori):
+    # n <0 left n>0 right
+    ang_v = 90
+    # turning speed
+    time_needed = (60 / ang_v)/3.14
+    set_car_control(linear_v=0, angular_v=ang_v)
+    time.sleep(time_needed)
+    set_car_control(linear_v=linv_ori, angular_v=angv_ori)
+    return time_needed
+def turn_left_90_degrees(linv_ori, angv_ori):
+    # n <0 left n>0 right
+    ang_v = -90
+    # turning speed
+    time_needed = (-110 / ang_v)/3.14
+    set_car_control(linear_v=0, angular_v=ang_v)
+    time.sleep(time_needed)
+    set_car_control(linear_v=linv_ori, angular_v=angv_ori)
+    return time_needed
+
+def avoid_duck(linv_ori, angv_ori):
+    # turn right 90 degrees
+    time_needed = turn_right_90_degrees(0,0)
+    time.sleep(time_needed)
+    # # go for 1 second
+    go_straight_n_seconds(0,0,0.6)
+    time.sleep(0.6)
+    # # turn left 90 degrees
+    time_needed = turn_left_90_degrees(0,0)
+    time.sleep(time_needed)
+    # # # go for 1 second
+    go_straight_n_seconds(0, 0, 1.2)
+    time.sleep(1.2)
+    # # # turn left 90 degrees
+    time_needed = turn_left_90_degrees(0, 0)
+    time.sleep(time_needed)
+    # # # go for 1 second
+    go_straight_n_seconds(0,0,1)
+    time.sleep(1)
+    # # turn right 90 degrees
+    turn_right_60_degrees(linv_ori, angv_ori)
+
 def analyze_image(image, prev_value):
-    img_bottom = image[-200:, :]
+    img_bottom = image[-100:, :]
     blur = cv2.GaussianBlur(img_bottom, (5, 5), 0)
+    #cv2.imwrite("last_frame_straight.png", blur)
     ret, binary_img = cv2.threshold(blur, 0, 255, cv2.THRESH_BINARY_INV + cv2.THRESH_OTSU)
 
     base_line = binary_img[-1]
@@ -198,23 +254,25 @@ def set_car_control(linear_v, angular_v):
     set_speed(left_in, right_in)
     return
 
-def detect_qrcode(image): # takes RGB as input
-    barcodes = decode(image)
+def detect_qrcode(image,detector): # takes RGB as input
+    #barcodes = decode(image)
     #detector = cv2.QRCodeDetector()
-    #data, vertices_array, binary_qrcode = detector.detectAndDecodeCurved(image)
-    if len(barcodes) > 0:
-        print("Decoded Data : {}".format(barcodes))
-        if("car_rotate_720" in str(barcodes[0].data) ):
-            # time_needed = Turn720Deg(linv_ori,angv_ori)
-            return True,"car_rotate_720"
-        elif("car_turn_around" in str(barcodes[0].data)):
-            # time_needed = TurnAround(linv_ori,angv_ori)
-            return True,"car_turn_around"
-        elif ("car_stop_10s" in str(barcodes[0].data)):
-            # time_needed = Stop10s(linv_ori, angv_ori)
-            return True,"car_stop_10s"
-    else:
-        print("QR Code not detected")
+    data, vertices_array, binary_qrcode = detector.detectAndDecodeCurved(image)
+    if len(data)>0:
+        return True
+    # if len(barcodes) > 0:
+    #     print("Decoded Data : {}".format(barcodes))
+    #     if("car_rotate_720" in str(barcodes[0].data) ):
+    #         # time_needed = Turn720Deg(linv_ori,angv_ori)
+    #         return True,"car_rotate_720"
+    #     elif("car_turn_around" in str(barcodes[0].data)):
+    #         # time_needed = TurnAround(linv_ori,angv_ori)
+    #         return True,"car_turn_around"
+    #     elif ("car_stop_10s" in str(barcodes[0].data)):
+    #         # time_needed = Stop10s(linv_ori, angv_ori)
+    #         return True,"car_stop_10s"
+    # else:
+        #print("QR Code not detected")
     return False, 0
 def qrcode_perform_action(action):
     if ("car_rotate_720" ==action):
@@ -224,38 +282,40 @@ def qrcode_perform_action(action):
         time_needed = TurnAround(0,0)
         return time_needed
     elif ("car_stop_10s"  ==action):
-        time_needed = Stop10s(0,0)
+        time_needed = Stop10s(0, 0)
         return time_needed
 def detect_yellow_area(image,last_duck_detected):
     # Convert BGR image to HSV
     hsv = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
 
     # Define range of yellow color in HSV
-    lower_yellow = np.array([15, 25, 25])
+    lower_yellow = np.array([15, 50, 50])
     upper_yellow = np.array([30, 255, 255])
 
     # Threshold the HSV image to get only yellow colors
     mask = cv2.inRange(hsv, lower_yellow, upper_yellow)
+    num_non_zero_pixels = np.count_nonzero(mask)
 
-    # Bitwise-AND mask and original image
-    res = cv2.bitwise_and(image, image, mask=mask)
-
-    # Check if there's yellow in the image
-    num_white_pixels = np.sum(res >= 200)  #
-    print (num_white_pixels)
-
-    if last_duck_detected:
-        if num_white_pixels>=1:
-            return  True
+    #plt.imshow(img_with_keypoints)
     # # Print the result
-    if num_white_pixels >6:
-        print("Yellow detected in the image!")
-        return True
-
-    return False
+    if num_non_zero_pixels <=10:
+        #print("No Yellow detected in the image!")
+        return False
+    # try to distinguish duck and a sign
+    contours, _ = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+    # Find the contour with the largest area
+    largest_contour = max(contours, key=cv2.contourArea)
+    epsilon = 0.04 * cv2.arcLength(largest_contour, True)
+    approx = cv2.approxPolyDP(largest_contour, epsilon, True)
+    if len(approx)<=4:
+        #print("Yellow sign detected in the image!")
+        return False
+    #print("duck in image")
+    return True
 def control_car(dry_run=False):
     cap = init_cam()
     killer = GracefulKiller()
+    detector = cv2.QRCodeDetector()
     image_gray, image_ori = get_image(cap, killer)
     # cv2.imshow("Image ori", image_ori)
     # cv2.imshow("Image gray", image_gray)
@@ -263,46 +323,46 @@ def control_car(dry_run=False):
     current_position = analyze_image(image_gray, 0)
     controller = PID(1, 0.1, 0.05, setpoint=image_middle, output_limits=(0, 6.28), starting_output=3.14,
                      sample_time=1. / 30.)
-    #duck_detected = False
+    duck_detected = False
     qrcode_detected = False
     action = None
     linear_v = 300
     angular_v = 0
-    last_qrcode_detected = False
+    last_duck_detected = False
+    #last_qrcode_detected = False
     while not killer.kill_now:
-
-        if qrcode_detected and not last_qrcode_detected:
-            qrcode_perform_action(action)
-            last_qrcode_detected = True
-            #sleep to avoid the camera capturing qr code again
-            time.sleep(1)
-            print("perform qr code action")
+        if duck_detected:
+            stop_car()
+            print("car stopped")
+            last_duck_detected = True
+            time.sleep(0.5)
         else:
             print("line following")
-            last_qrcode_detected = False
-            if(last_qrcode_detected):
+            if(last_duck_detected):
                 print("last frame detected something")
                 # do the PID analyze again
                 image_gray, image_ori = get_image(cap, killer)
                 current_position = analyze_image(image_gray, current_position)
                 last_qrcode_detected = False
+                last_duck_detected = False
             #start_time = time.time()
             angular_v = controller(current_position) - 3.14
             #current setup works
             linear_v = 300
             angular_v *=30
-            if (current_position < (image_gray.shape[1] / 5)) or (current_position > (image_gray.shape[1] - image_gray.shape[1] / 5)):
-                linear_v = 0
-                angular_v = angular_v * 3
+            # if (current_position < (image_gray.shape[1] / 5)) or (current_position > (image_gray.shape[1] - image_gray.shape[1] / 5)):
+            #     linear_v = 0
+            #     angular_v = angular_v * 3
 
             if not dry_run:
                 set_car_control(linear_v, angular_v)
 
         image_gray,image_ori = get_image(cap, killer)
-        qrcode_detected, action = detect_qrcode(image_gray)
-        image_gray, image_ori = get_image(cap, killer)
-        current_position = analyze_image(image_gray, current_position)
+        #qrcode_detected, action = detect_qrcode(image_gray, detector)
 
+        current_position = analyze_image(image_gray, current_position)
+        image_gray, image_ori = get_image(cap, killer)
+        duck_detected = detect_yellow_area(image_ori,last_duck_detected)
 
     set_speed(0, 0)
     print("process terminated")

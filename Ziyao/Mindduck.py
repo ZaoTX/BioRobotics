@@ -169,8 +169,7 @@ def detect_yellow_area(image):
     # Check if there's yellow in the image
     params = cv2.SimpleBlobDetector_Params()
     params.minArea = 4*5 # Not a single pixel I guess...
-    params.filterByInertia = False
-    params.filterByConvexity = False  # Duck is not very convex...
+    params.filterByCircularity = 1
     detector = cv2.SimpleBlobDetector.create(params)
     keypoints = detector.detect(res)
     # Print the result
