@@ -14,8 +14,8 @@ def get_image(cap, killer):
 
 def rotate_image(img, angle):
     pad_width = max(img.shape)
-    padded_img = np.pad(img, pad_width, mode='constant', constant_values=0)
-
+    padded_img = np.pad(img, pad_width, mode='constant', constant_values=255)
+    return padded_img
     # Rotate the padded image
     rotated_img = ndimage.rotate(padded_img, angle, reshape=False, mode='nearest')
 
