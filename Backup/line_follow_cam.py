@@ -196,8 +196,8 @@ def control_car(dry_run=False):
             #angular_v *= 1
             linear_v = int(700)
         else :
-            angular_v *= 50
-            linear_v = 400
+            angular_v *= 40
+            linear_v = 430
 
 
         # if linear_v <300:
