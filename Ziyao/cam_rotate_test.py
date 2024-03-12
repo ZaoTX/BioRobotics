@@ -14,7 +14,6 @@ def get_image(cap, killer):
 
 def rotate_image(img, angle):
     padded_img = np.pad(img, 1, mode='constant', constant_values=255)
-    return padded_img
     # Rotate the padded image
     rotated_img = ndimage.rotate(padded_img, angle, reshape=False, mode='nearest')
 
@@ -26,7 +25,7 @@ def rotate_image(img, angle):
     # Crop the rotated image to remove black edges
     cropped_rotated_img = rotated_img[bbox[0]:bbox[1], bbox[2]:bbox[3]]
 
-    return cropped_rotated_img
+    return rotated_img
 
 
 # Example usage
