@@ -197,7 +197,7 @@ def control_car(dry_run=False):
             linear_v = int(600)
         else :
             angular_v *= 40
-            linear_v = 450
+            linear_v = 420
 
 
         if (current_position < (image.shape[1] / 5)) or (current_position > (image.shape[1] - image.shape[1] / 5)):
