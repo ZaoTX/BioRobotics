@@ -307,6 +307,8 @@ def detect_yellow_area(image,last_duck_detected):
     largest_contour = max(contours, key=cv2.contourArea)
     epsilon = 0.04 * cv2.arcLength(largest_contour, True)
     approx = cv2.approxPolyDP(largest_contour, epsilon, True)
+    if last_duck_detected and len(approx)>=4:
+        return True
     if len(approx)<=4:
         #print("Yellow sign detected in the image!")
         return False
